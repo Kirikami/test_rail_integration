@@ -22,6 +22,7 @@ module TestRail
     id_of_run = parameters[0].to_i
     name_of_environment = Connection.test_run_name(id_of_run).downcase.match(/(#{TestRunParameters::VENTURE_REGEX}) (#{TestRunParameters::ENVIRONMENT_REGEX})*/)
     environment_for_run = name_of_environment[1], name_of_environment[2] if name_of_environment
+    environment_for_run[0] = parameters[1] if parameters.size > 1
   end
   TestRailTools.prepare_config(id_of_run, environment_for_run)
 end
