@@ -17,7 +17,7 @@
 :test_passed_comment: "test **passed:**"
 :test_failed_comment: "test **failed:**"
 
-:ventures: vn|id|ph|my|sg|th #values for generating parametrized url for running test
+:ventures: vn|id|ph|my|sg|th|all #values for generating parametrized url for running test
 :environments: live_test|staging|showroom #values for generating parametrized url for running test
 
 :in_progress: " (in progress)" #value for changing test run name for monitoring complete of test run
