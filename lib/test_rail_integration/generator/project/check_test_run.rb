@@ -8,7 +8,7 @@ module TestRail
 
   class CheckTestRun
 
-    def check
+    def self.check
       test_cases_id = Connection.cases_with_types
       test_cases_id.each do |test_case|
 

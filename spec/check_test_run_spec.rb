@@ -13,7 +13,7 @@ describe 'Checking test run' do
       allow(TestRail::Connection).to receive(:get_case_info).and_return({id: 1011, "title" => 'MLP'})
       allow(TestRail::Connection).to receive(:commit_test_result).and_return([])
 
-      test_case_result = TestRail::CheckTestRun.new.check
+      test_case_result = TestRail::CheckTestRun.check
       expect(test_case_result.title).to eq('MLP')
       expect(test_case_result.comment).to eq({:status => 5, :comment => "test **failed:**"})
     end

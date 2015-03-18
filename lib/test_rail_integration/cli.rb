@@ -13,7 +13,7 @@ module TestRailIntegration
     desc "check_test_run_and_update", "Check test run statuses and update"
 
     def check_test_run_and_update
-      check
+      CheckTestRun.check
     end
   end
 end
