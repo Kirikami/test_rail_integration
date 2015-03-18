@@ -1,5 +1,6 @@
 require 'thor'
 require_relative 'generator/project'
+require_relative '../test_rail_integration/generator/project/check_test_run'
 
 module TestRailIntegration
   class CLI < Thor
@@ -13,7 +14,7 @@ module TestRailIntegration
     desc "check_test_run_and_update", "Check test run statuses and update"
 
     def check_test_run_and_update
-      CheckTestRun.check
+      TestRailIntegration::TestRail::CheckTestRun.check
     end
   end
 end
