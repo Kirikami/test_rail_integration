@@ -3,7 +3,6 @@ require_relative '../../generator/API_client'
 require_relative '../../generator/connection'
 require_relative '../../generator/test_rail_tools'
 
-
 module TestRail
 
   class CheckTestRun
@@ -24,6 +23,7 @@ module TestRail
             test_case_result.comment ||= TestRail::TestCaseResult::COMMENT[:fail]
             TestRail::Connection.commit_test_result(test_case_result)
 
+            p test_case_result
             return test_case_result
           end
         end
