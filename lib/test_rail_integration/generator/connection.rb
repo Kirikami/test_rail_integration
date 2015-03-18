@@ -150,6 +150,10 @@ module TestRail
       case_ids
     end
 
+    def self.get_case_info(case_id)
+      client.send_get("get_case/#{case_id}")
+    end
+
     #
     # Changing name of test run from <test run name> in progress to <test run name>
     #
