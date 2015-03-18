@@ -32,7 +32,7 @@ module TestRail
     #
     def to_test_rail_api
       comment_message = "#{self.comment[:comment]} \"#{self.title}\""
-      comment_message = "**[#{Fixtures.instance['venture']}]** #{self.comment[:comment]} for \"#{self.title}\"" unless Fixtures.instance['venture'].empty?
+      comment_message = "**[#{Fixtures.instance['venture']}]** #{self.comment[:comment]} for \"#{self.title}\"" unless defined?(Fixtures.instance['venture']).nil?
       comment_message += "\n Exception : #{self.exception_message}" unless self.exception_message.nil?
       comment_message += "\n #{self.previous_comment}" if self.comment[:status] == COMMENT[:fail][:status] || self.comment[:status] == COMMENT[:unchanged_pass][:status]
       if self.comment[:status] == COMMENT_STATUS
