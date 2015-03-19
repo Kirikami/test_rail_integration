@@ -14,7 +14,7 @@ class CLI < Thor
   desc "check_test_run_and_update", "Check test run statuses and update"
 
   def check_test_run_and_update
-    TestRail::CheckTestRun.check
+    TestRail::Check.check_test_run_statuses
   end
 end
 
