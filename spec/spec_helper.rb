@@ -1,4 +1,5 @@
 require 'simplecov'
+require 'simplecov-teamcity-summary/formatter'
 
 SimpleCov.start do
   at_exit do
