@@ -8,8 +8,8 @@ require 'test_rail_integration/generator/test_run_creation'
 require 'test_rail_integration/generator/test_rail_tools'
 
 module TestRail
-  unless TestRailIntegration::TestTail::Generators::Project.test_rail_data_file_exist?
-    TestRailIntegration::TestTail::Generators::Project.copy_file("test_rail_data.yml")
+  unless Generators::Project.test_rail_data_file_exist?
+    Generators::Project.copy_file("test_rail_data.yml")
     raise "Please fill all required data in test rail data yml file"
   end
 
