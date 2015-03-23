@@ -28,6 +28,8 @@ module TestRail
 
       TestRail::Connection.commit_test_result(test_case_result)
 
+      test_case_result
+
     end
 
     def self.failed_result?(result)
@@ -43,7 +45,7 @@ module TestRail
     end
 
     at_exit do
-      TestRail::Connection.change_test_run_name
+      TestRail::Connection.change_test_run_name until ENV['rspec-tests-running']
     end
   end
 end
