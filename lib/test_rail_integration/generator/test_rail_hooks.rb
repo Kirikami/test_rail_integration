@@ -45,7 +45,7 @@ module TestRail
     end
 
     at_exit do
-      TestRail::Connection.change_test_run_name
+      TestRail::Connection.change_test_run_name until ENV['rspec-tests-running']
     end
   end
 end
