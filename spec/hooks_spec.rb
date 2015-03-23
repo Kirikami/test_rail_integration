@@ -9,7 +9,6 @@ describe 'Update test results' do
     @scenario = double('scenario')
     allow(@scenario).to receive(:source_tag_names).and_return(['@C4556'])
     allow(@scenario).to receive(:title).and_return('title')
-    allow(TestRail::Connection).to receive(:change_test_run_name).and_return('changed!')
   end
 
   context 'test that test rail data is correct if there is no previous result' do
@@ -19,8 +18,7 @@ describe 'Update test results' do
     end
 
     it 'current result should be passed' do
-      allow(@scenario).to receive(:passed?).and_return(true)
-      test_result = TestRail::Hook.update_test_rail(@scenario)
+      test_result = TestRail::Hook.update_test_rail(passed_scenario)
       expect(test_result.test_case_id).to eq('4556')
       expect(test_result.title).to eq('title')
       expect(test_result.comment).to eq({:status=>1, :comment => 'test **passed:**'})
@@ -28,11 +26,7 @@ describe 'Update test results' do
     end
 
     it 'current result should be failed' do
-      allow(@scenario).to receive(:passed?).and_return(false)
-      steps = double('steps')
-      allow(steps).to receive(:exception).and_return('exception')
-      allow(@scenario).to receive(:steps).and_return(steps)
-      test_result = TestRail::Hook.update_test_rail(@scenario)
+      test_result = TestRail::Hook.update_test_rail(failed_scenario)
       expect(test_result.test_case_id).to eq('4556')
       expect(test_result.title).to eq('title')
       expect(test_result.comment).to eq({:status=>5, :comment => 'test **failed:**'})
@@ -49,8 +43,7 @@ describe 'Update test results' do
     end
 
     it 'current result should be passed' do
-      allow(@scenario).to receive(:passed?).and_return(true)
-      test_result = TestRail::Hook.update_test_rail(@scenario)
+      test_result = TestRail::Hook.update_test_rail(passed_scenario)
       expect(test_result.test_case_id).to eq('4556')
       expect(test_result.title).to eq('title')
       expect(test_result.comment).to eq({:status=>1, :comment => 'test **passed:**'})
@@ -58,11 +51,7 @@ describe 'Update test results' do
     end
 
     it 'current result should be failed' do
-      allow(@scenario).to receive(:passed?).and_return(false)
-      steps = double('steps')
-      allow(steps).to receive(:exception).and_return('exception')
-      allow(@scenario).to receive(:steps).and_return(steps)
-      test_result = TestRail::Hook.update_test_rail(@scenario)
+      test_result = TestRail::Hook.update_test_rail(failed_scenario)
       expect(test_result.test_case_id).to eq('4556')
       expect(test_result.title).to eq('title')
       expect(test_result.comment).to eq({:status=>5, :comment => 'test **failed:**'})
@@ -79,11 +68,7 @@ describe 'Update test results' do
     end
 
     it 'current result should be failed' do
-      allow(@scenario).to receive(:passed?).and_return(false)
-      steps = double('steps')
-      allow(steps).to receive(:exception).and_return('exception')
-      allow(@scenario).to receive(:steps).and_return(steps)
-      test_result = TestRail::Hook.update_test_rail(@scenario)
+      test_result = TestRail::Hook.update_test_rail(failed_scenario)
       expect(test_result.test_case_id).to eq('4556')
       expect(test_result.title).to eq('title')
       expect(test_result.comment).to eq({:status=>5, :comment => 'test **failed:**'})
@@ -91,8 +76,7 @@ describe 'Update test results' do
     end
 
     it 'current result should be comment' do
-      allow(@scenario).to receive(:passed?).and_return(true)
-      test_result = TestRail::Hook.update_test_rail(@scenario)
+      test_result = TestRail::Hook.update_test_rail(passed_scenario)
       expect(test_result.test_case_id).to eq('4556')
       expect(test_result.title).to eq('title')
       expect(test_result.comment).to eq({:status=>0, :comment => 'test **passed:**'})
@@ -110,7 +94,7 @@ describe 'Update test results' do
 
     it 'current result should be comment' do
       allow(@scenario).to receive(:passed?).and_return(true)
-      test_result = TestRail::Hook.update_test_rail(@scenario)
+      test_result = TestRail::Hook.update_test_rail(passed_scenario)
       expect(test_result.test_case_id).to eq('4556')
       expect(test_result.title).to eq('title')
       expect(test_result.comment).to eq({:status=>0, :comment => 'test **passed:**'})
@@ -118,17 +102,28 @@ describe 'Update test results' do
     end
 
     it 'current result should be failed' do
-      allow(@scenario).to receive(:passed?).and_return(false)
-      steps = double('steps')
-      allow(steps).to receive(:exception).and_return('exception')
-      allow(@scenario).to receive(:steps).and_return(steps)
-      test_result = TestRail::Hook.update_test_rail(@scenario)
+      test_result = TestRail::Hook.update_test_rail(failed_scenario)
       expect(test_result.test_case_id).to eq('4556')
       expect(test_result.title).to eq('title')
       expect(test_result.comment).to eq({:status=>5, :comment => 'test **failed:**'})
       expect(test_result.to_test_rail_api).to eq({:status_id => 5, :comment => "test **failed:** \"title\"\n Exception : exception\n test **failed:**"})
     end
 
+  end
+
+  private
+  def passed_scenario
+    allow(@scenario).to receive(:passed?).and_return(true)
+    @scenario
+  end
+
+  private
+  def failed_scenario
+    allow(@scenario).to receive(:passed?).and_return(false)
+    steps = double('steps')
+    allow(steps).to receive(:exception).and_return('exception')
+    allow(@scenario).to receive(:steps).and_return(steps)
+    @scenario
   end
 
 end
