@@ -9,7 +9,7 @@ describe 'Checking test run' do
     it 'should change status to fail' do
 
       allow(TestRail::Connection).to receive(:cases_with_types).and_return([1011])
-      allow(TestRail::Connection).to receive(:get_test_result).and_return([{"status_id" => 1, :comment => "FTW"}, {"status_id" => 5, :comment => "Burn heretics"}])
+      allow(TestRail::Connection).to receive(:get_test_results).and_return([{"status_id" => 1, :comment => "FTW"}, {"status_id" => 5, :comment => "Burn heretics"}])
       allow(TestRail::Connection).to receive(:get_case_info).and_return({id: 1011, "title" => 'MLP'})
       allow(TestRail::Connection).to receive(:commit_test_result).and_return([])
 
@@ -21,7 +21,7 @@ describe 'Checking test run' do
     it "should call api twice" do
 
       allow(TestRail::Connection).to receive(:cases_with_types).and_return([1011, 1213])
-      allow(TestRail::Connection).to receive(:get_test_result).and_return([{"status_id" => 1, :comment => "FTW"}, {"status_id" => 5, :comment => "Burn heretics"}] )
+      allow(TestRail::Connection).to receive(:get_test_results).and_return([{"status_id" => 1, :comment => "FTW"}, {"status_id" => 5, :comment => "Burn heretics"}] )
       allow(TestRail::Connection).to receive(:get_case_info).and_return({id: 1011, "title" => 'MLP'})
       allow(TestRail::Connection).to receive(:commit_test_result).and_return([])
 
