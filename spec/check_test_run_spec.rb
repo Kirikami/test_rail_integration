@@ -44,7 +44,7 @@ describe 'Checking test run' do
         expect(test_case_results.length).to eq 2
       end
 
-      it 'should call api once' do
+      it 'should call api twice' do
         expect(TestRail::Connection).to receive(:cases_with_types).once
         expect(TestRail::Connection).to receive(:get_case_info).twice
         expect(TestRail::Connection).to receive(:get_test_results).twice
