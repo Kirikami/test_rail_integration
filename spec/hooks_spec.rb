@@ -15,7 +15,7 @@ describe 'Update test results' do
     allow(@scenario).to receive(:title).and_return('title')
   end
 
-  context 'test that test rail data is correct if there is no previous result' do
+  context 'when there is no previous result' do
 
     before(:each) do
       allow(TestRail::Connection).to receive(:get_test_result).and_return([])
@@ -39,7 +39,7 @@ describe 'Update test results' do
 
   end
 
-  context 'test that test rail data is correct if previous result is passed' do
+  context 'when previous result is passed' do
 
     before(:each) do
       allow(TestRail::Connection).to receive(:get_test_result).and_return(
@@ -64,7 +64,7 @@ describe 'Update test results' do
 
   end
 
-  context 'test that test rail data is correct if previous result is failed' do
+  context 'when previous result is failed' do
 
     before(:each) do
       allow(TestRail::Connection).to receive(:get_test_result).and_return(
@@ -89,7 +89,7 @@ describe 'Update test results' do
 
   end
 
-  context 'test that test rail data is correct if previous result is comment' do
+  context 'when previous result is comment' do
 
     before(:each) do
       allow(TestRail::Connection).to receive(:get_test_result).and_return(
