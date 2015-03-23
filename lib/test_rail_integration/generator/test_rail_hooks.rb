@@ -28,6 +28,8 @@ module TestRail
 
       TestRail::Connection.commit_test_result(test_case_result)
 
+      test_case_result
+
     end
 
     def self.failed_result?(result)
