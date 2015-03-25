@@ -8,6 +8,10 @@ describe 'Api calls' do
     before(:each) do
       allow(TestRail::Connection).to receive(:commit_test_result).and_return('good!')
       @scenario = double('scenario')
+      @steps = double('scenario')
+      allow(@steps).to receive(:exception).and_return(nil)
+      allow(@scenario).to receive(:steps).and_return(@steps)
+      allow(@scenario).to receive(:kind_of?).and_return(false)
       allow(@scenario).to receive(:source_tag_names).and_return(['@C4556'])
       allow(@scenario).to receive(:title).and_return('title')
       allow(@scenario).to receive(:passed?).and_return(true)
