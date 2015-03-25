@@ -7,9 +7,11 @@ module TestRail
 
   class Check
 
-    def self.check_test_run_statuses
+    def self.check_test_run_statuses(test_run_id)
       start_time = Time.new
       results = []
+
+      TestRail::Connection.test_run_id=(test_run_id)
 
       test_cases_ids = Connection.cases_with_types
       test_cases_ids.each do |test_case_id|
