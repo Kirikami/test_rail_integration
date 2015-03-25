@@ -11,7 +11,7 @@ class CLI < Thor
     TestRail::Generators::Project.copy_file("test_rail_data.yml", "config/data/")
   end
 
-  desc "check_test_run_and_update", "Check test run statuses and update"
+  desc "check_test_run_and_update", "Check test run statuses and update. Set test run id through --test_run_id parameter"
   option :test_run_id
   def check_test_run_and_update
     if options[:test_run_id]
