@@ -30,7 +30,7 @@ module TestRail
     # client.send_post("add_result_for_case/12/3131", status_id: '1', comment: "Test passed" )
     #
     def self.commit_test_result(test_case_result)
-      client.send_post("add_result_for_case/#{TEST_RUN_ID}/#{test_case_result.test_case_id}", test_case_result.to_test_rail_api)
+      client.send_post("add_result_for_case/#{test_run_id}/#{test_case_result.test_case_id}", test_case_result.to_test_rail_api)
     end
 
     #
@@ -106,10 +106,6 @@ module TestRail
     # Take all test types
     #
     def self.cases_with_types
-      cases_with_types_by_test_suite_id(test_suite_id)
-    end
-
-    def self.cases_with_types_by_test_suite_id(test_suite_id)
       types = TYPES
       cases = client.send_get("get_cases/#{project_id}&suite_id=#{test_suite_id}&type_id=#{types}")
       case_ids = cases.map { |test_case| test_case["id"] }
