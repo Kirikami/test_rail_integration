@@ -106,6 +106,10 @@ module TestRail
     # Take all test types
     #
     def self.cases_with_types
+      cases_with_types_by_test_suite_id(test_suite_id)
+    end
+
+    def self.cases_with_types_by_test_suite_id(test_suite_id)
       types = TYPES
       cases = client.send_get("get_cases/#{project_id}&suite_id=#{test_suite_id}&type_id=#{types}")
       case_ids = cases.map { |test_case| test_case["id"] }
