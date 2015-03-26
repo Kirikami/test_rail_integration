@@ -1,4 +1,5 @@
 require_relative 'test_rail_data_load'
+require 'cucumber'
 
 module TestRail
   class TestCaseResult
@@ -9,7 +10,8 @@ module TestRail
                   :assign_to,
                   :previous_comment,
                   :scenario,
-                  :test_results
+                  :test_results,
+                  :title
 
     COMMENT_STATUS ||= TestRail::TestRailDataLoad.test_rail_data[:status_comment]
     PASS ||= TestRail::TestRailDataLoad.test_rail_data[:test_pass]
@@ -29,6 +31,13 @@ module TestRail
     def initialize(scenario)
       self.test_case_id = scenario.source_tag_names.find { |e| e.match(TEST_RAIL_ID_REGEX) }[2..-1]
       self.scenario = scenario
+      if scenario.kind_of? Cucumber::Ast::OutlineTable::ExampleRow
+        self.title = scenario.scenario_outline.title
+        self.exception_message = scenario.scenario_exception unless defined?(scenario.scenario_exception).nil?
+      else
+        self.title = scenario.title
+        self.exception_message = scenario.steps.exception unless defined?(scenario.steps).nil?
+      end
       self.test_results = TestRail::Connection.get_test_results(self.test_case_id)
       self.previous_comment = get_last_failed_comment unless get_indexes_of_fails.empty?
     end
@@ -49,12 +58,12 @@ module TestRail
     # Get indexes of failed results
     #
     def get_indexes_of_fails
-      indexes = self.test_results.map.with_index { |result, index| result["status_id"] == TestCaseResult::COMMENT[:fail][:status] ? index : nil }
+      indexes = self.test_results.map.with_index { |result, index| result["status_id"] == COMMENT[:fail][:status] ? index : nil }
       indexes.compact
     end
 
     def get_indexes_of_passes
-      indexes = self.test_results.map.with_index { |result, index| result["status_id"] == TestCaseResult::COMMENT[:pass][:status] ? index : nil }
+      indexes = self.test_results.map.with_index { |result, index| result["status_id"] == COMMENT[:pass][:status] ? index : nil }
       indexes.compact
     end
 
@@ -94,7 +103,7 @@ module TestRail
 
       if failed?
         self.comment ||= COMMENT[:fail]
-        self.exception_message = scenario.steps.exception rescue nil
+        self.exception_message = self.exception_message rescue nil
         self.assign_to = ASSIGN_TO
       end
 
@@ -111,7 +120,7 @@ module TestRail
     # {status_id: 1, comment: "Test passed"}
     #
     def to_test_rail_api
-      comment_message = "#{self.comment[:comment]} \"#{self.scenario.title}\""
+      comment_message = "#{self.comment[:comment]} \"#{self.title}\""
       comment_message = "**[#{Fixtures.instance['venture']}]** #{self.comment[:comment]} for \"#{self.title}\"" unless defined?(Fixtures.instance['venture']).nil?
       comment_message += "\n Exception : #{self.exception_message}" unless self.exception_message.nil?
       comment_message += "\n #{self.previous_comment}" if self.comment[:status] == COMMENT[:fail][:status] || self.comment[:status] == COMMENT[:unchanged_pass][:status]
