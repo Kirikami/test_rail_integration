@@ -109,7 +109,7 @@ describe 'Update test results' do
 
   private
   def passed_scenario
-    @steps = double('scenario')
+    @steps = double('steps')
     allow(@steps).to receive(:exception).and_return(nil)
     allow(@scenario).to receive(:steps).and_return(@steps)
     allow(@scenario).to receive(:passed?).and_return(true)
@@ -119,7 +119,7 @@ describe 'Update test results' do
   private
   def failed_scenario
     allow(@scenario).to receive(:passed?).and_return(false)
-    @steps = double('scenario')
+    @steps = double('steps')
     allow(@steps).to receive(:exception).and_return("exception")
     allow(@scenario).to receive(:steps).and_return(@steps)
     @scenario
