@@ -58,12 +58,12 @@ module TestRail
     # Get indexes of failed results
     #
     def get_indexes_of_fails
-      indexes = self.test_results.map.with_index { |result, index| result["status_id"] == TestCaseResult::COMMENT[:fail][:status] ? index : nil }
+      indexes = self.test_results.map.with_index { |result, index| result["status_id"] == COMMENT[:fail][:status] ? index : nil }
       indexes.compact
     end
 
     def get_indexes_of_passes
-      indexes = self.test_results.map.with_index { |result, index| result["status_id"] == TestCaseResult::COMMENT[:pass][:status] ? index : nil }
+      indexes = self.test_results.map.with_index { |result, index| result["status_id"] == COMMENT[:pass][:status] ? index : nil }
       indexes.compact
     end
 

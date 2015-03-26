@@ -3,6 +3,7 @@ require_relative '../lib/test_rail_integration/generator/connection'
 require_relative '../lib/test_rail_integration/generator/test_rail_hooks'
 
 describe 'Scenario types' do
+
   before(:all) do
     ENV['rspec-tests-running'] = '1'
   end
@@ -42,7 +43,7 @@ describe 'Scenario types' do
         allow(@scenario).to receive(:passed?).and_return(false)
       end
 
-      it 'should receive outline title and execption' do
+      it 'should receive outline title and exception' do
         test_result = TestRail::Hook.update_test_rail(@scenario)
         expect(test_result.test_case_id).to eq('4556')
         expect(test_result.comment).to eq({:status => 5, :comment => 'test **failed:**'})
@@ -51,7 +52,7 @@ describe 'Scenario types' do
     end
   end
 
-  context 'when standart scenario received' do
+  context 'when standard scenario received' do
 
     before(:each) do
       allow(TestRail::Connection).to receive(:commit_test_result).and_return('good!')
@@ -71,7 +72,7 @@ describe 'Scenario types' do
         allow(@scenario).to receive(:passed?).and_return(true)
       end
 
-      it "should keep title from scenrio" do
+      it 'should keep title from scenario' do
         test_result = TestRail::Hook.update_test_rail(@scenario)
         expect(test_result.test_case_id).to eq('4556')
         expect(test_result.comment).to eq({:status => 1, :comment => 'test **passed:**'})
