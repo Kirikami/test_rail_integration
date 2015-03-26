@@ -16,7 +16,7 @@ describe 'Checking test run' do
       end
 
       it 'should change status to fail' do
-        test_case_results = TestRail::Check.check_test_run_statuses
+        test_case_results = TestRail::Check.check_test_run_statuses(anything)
         expect(test_case_results[0].comment).to eq({:status => 5, :comment => "test **failed:**"})
       end
 
@@ -25,7 +25,12 @@ describe 'Checking test run' do
         expect(TestRail::Connection).to receive(:get_case_info).once
         expect(TestRail::Connection).to receive(:get_test_results).once
         expect(TestRail::Connection).to receive(:commit_test_result).once
-        TestRail::Check.check_test_run_statuses
+        TestRail::Check.check_test_run_statuses(anything)
+      end
+
+      it 'should set test run id with new id' do
+        TestRail::Check.check_test_run_statuses('11111')
+        expect(TestRail::Connection::test_run_id).to eq('11111')
       end
 
     end
@@ -40,7 +45,7 @@ describe 'Checking test run' do
       end
 
       it 'should have two results' do
-        test_case_results = TestRail::Check.check_test_run_statuses
+        test_case_results = TestRail::Check.check_test_run_statuses(anything)
         expect(test_case_results.length).to eq 2
       end
 
@@ -49,7 +54,7 @@ describe 'Checking test run' do
         expect(TestRail::Connection).to receive(:get_case_info).twice
         expect(TestRail::Connection).to receive(:get_test_results).twice
         expect(TestRail::Connection).to receive(:commit_test_result).twice
-        TestRail::Check.check_test_run_statuses
+        TestRail::Check.check_test_run_statuses(anything)
       end
 
     end

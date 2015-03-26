@@ -30,7 +30,7 @@ module TestRail
     # client.send_post("add_result_for_case/12/3131", status_id: '1', comment: "Test passed" )
     #
     def self.commit_test_result(test_case_result)
-      client.send_post("add_result_for_case/#{TEST_RUN_ID}/#{test_case_result.test_case_id}", test_case_result.to_test_rail_api)
+      client.send_post("add_result_for_case/#{test_run_id}/#{test_case_result.test_case_id}", test_case_result.to_test_rail_api)
     end
 
     #
