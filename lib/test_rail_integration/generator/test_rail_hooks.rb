@@ -10,8 +10,5 @@ module TestRail
       TestRail::TestCaseResult.new(scenario).update
     end
 
-    at_exit do
-      TestRail::Connection.change_test_run_name until ENV['rspec-tests-running']
-    end
   end
 end
