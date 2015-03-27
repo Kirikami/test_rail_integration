@@ -4,10 +4,6 @@ require_relative '../lib/test_rail_integration/generator/test_rail_hooks'
 
 describe 'Update test results' do
 
-  before(:all) do
-    ENV['rspec-tests-running'] = '1'
-  end
-
   before(:each) do
     allow(TestRail::Connection).to receive(:commit_test_result).and_return('good!')
     @scenario = double('scenario')
