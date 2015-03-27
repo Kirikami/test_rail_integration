@@ -71,4 +71,66 @@ describe CLI do
 
   end
 
+  context 'when executing create_test_run command' do
+
+    context 'and not passing test_run_name parameter' do
+
+      it 'should see output message' do
+        result = capture(:stdout) { @subject.create_test_run }
+        expect(result).to eq("You must set correct test run name through --test_run_name\n")
+      end
+
+      it 'should not not call check_test_run_statuses method' do
+        expect(TestRail::Connection).not_to receive(:create_test_run_with_name)
+        @subject.create_test_run
+      end
+
+    end
+
+    context 'and passing test_run_name parameter' do
+
+      before(:all) do
+        @subject.options = {:test_run_name => 'test run name'}
+      end
+
+      before(:each) do
+        allow(TestRail::Connection).to receive(:create_test_run_with_name).and_return(
+                                           "{\"id\":561,\"suite_id\":63,\"name\":\"Test run 26\\/03\\/2015\"}")
+      end
+
+      it 'should execute command once' do
+        expect(TestRail::Connection).to receive(:create_test_run_with_name)
+        @subject.create_test_run
+      end
+
+      it 'should not see a output' do
+        result = capture(:stdout) { @subject.create_test_run }
+        expect(result).to eq("")
+      end
+
+      it 'should create test run with name' do
+      expect(subject.create_test_run).to eq('561')
+      end
+
+    end
+
+    context 'and passing empty test_run_name parameter' do
+
+      before(:all) do
+        @subject.options = {:test_run_name => ''}
+      end
+
+      it 'should not execute command once' do
+        expect(TestRail::Connection).not_to receive(:create_test_run_with_name)
+        @subject.create_test_run
+      end
+
+      it 'should see a output' do
+        result = capture(:stdout) { @subject.create_test_run }
+        expect(result).to eq("Test_run_name parameter should not be empty\n")
+      end
+    end
+
+  end
+
 end

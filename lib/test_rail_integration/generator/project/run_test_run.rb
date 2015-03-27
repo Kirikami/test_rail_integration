@@ -4,7 +4,6 @@ require 'test_rail_integration'
 require 'thor'
 require 'test_rail_integration/generator/API_client'
 require 'test_rail_integration/generator/connection'
-require 'test_rail_integration/generator/test_run_creation'
 require 'test_rail_integration/generator/test_rail_tools'
 
 module TestRail
@@ -15,15 +14,11 @@ module TestRail
 
   parameters = ARGV
   #TODO Make Hash instead of array for parameters
-  if parameters[0] == 'auto'
-    environment_for_run = parameters[1], parameters[2]
-    id_of_run = TestRunCreation.initialize_test_run
-  else
-    id_of_run = parameters[0].to_i
-    name_of_environment = Connection.test_run_name(id_of_run).downcase.match(/(#{TestRunParameters::VENTURE_REGEX}) (#{TestRunParameters::ENVIRONMENT_REGEX})*/)
-    environment_for_run = name_of_environment[1], name_of_environment[2] if name_of_environment
-    environment_for_run[0] = parameters[1] if parameters.size > 1
-  end
+  environment_for_run = parameters[1], parameters[2]
+  id_of_run = parameters[0].to_i
+  name_of_environment = Connection.test_run_name(id_of_run).downcase.match(/(#{TestRunParameters::VENTURE_REGEX}) (#{TestRunParameters::ENVIRONMENT_REGEX})*/)
+  environment_for_run = name_of_environment[1], name_of_environment[2] if name_of_environment
+  environment_for_run[0] = parameters[1] if parameters.size > 1
   TestRailTools.prepare_config(id_of_run, environment_for_run)
 end
 

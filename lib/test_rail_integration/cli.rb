@@ -1,6 +1,7 @@
 require 'thor'
 require_relative 'generator/project'
 require_relative 'generator/project/check'
+require 'json'
 
 class CLI < Thor
   include TestRail
@@ -19,6 +20,23 @@ class CLI < Thor
     else
       puts "You must set correct test run id through --test_run_id"
     end
+  end
+
+  desc "create_test_run", "Create test run with name. Set test run name through --test_run_name parameter"
+  option :test_run_name
+  def create_test_run
+    test_run_id = nil
+    test_run_name = options[:test_run_name]
+    if test_run_name
+      if test_run_name == ''
+        puts "Test_run_name parameter should not be empty"
+      else
+        test_run_id = JSON.parse(TestRail::Connection.create_test_run_with_name(options[:test_run_name]))[:"id"]
+      end
+    else
+      puts "You must set correct test run name through --test_run_name\n"
+    end
+    test_run_id
   end
 end
 
