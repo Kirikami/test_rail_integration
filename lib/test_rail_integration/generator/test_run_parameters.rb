@@ -12,7 +12,7 @@ module TestRail
     #
     # Checking of correct naming of created test run and return parameters for running test run
     #
-    def initialize(env=nil)
+    def initialize(env = nil, command = nil)
       @venture = ""
       @environment = ""
       if env
@@ -24,6 +24,7 @@ module TestRail
         end
       end
       @command = EXEC_COMMAND
+      @command = command if command
     end
   end
 end

@@ -7,9 +7,8 @@ describe 'Test Rail tools' do
 
   describe 'run cucumber command method' do
     before do
-      allow(TestRail::TestRailDataLoad).to receive(:test_rail_data).and_return({exec_command: "Command "})
       allow(TestRail::Connection).to receive(:cases_id).and_return([1011, 1111])
-      @result = capture(:stdout) { TestRail::TestRailTools.run_cucumber_command(121) }
+      @result = capture(:stdout) { TestRail::TestRailTools.generate_executable_command(121, nil, "Command"  ) }
     end
 
     it 'should generate command' do
@@ -28,21 +27,10 @@ end
 
   end
 
-  describe 'write executable command' do
-    before do
-      TestRail::TestRailTools.write_executable_command("Command")
-    end
-
-    it 'should change executable command' do
-      expect(File.read('config/data/test_rail_data.yml')).to include ":exec_command: Command "
-    end
-  end
-
   describe 'prepare config' do
     before do
-      allow(TestRail::TestRailDataLoad).to receive(:test_rail_data).and_return({exec_command: "Command "})
       allow(TestRail::Connection).to receive(:cases_id).and_return([1011, 1111])
-      @result = capture(:stdout) {TestRail::TestRailTools.prepare_config(125)}
+      @result = capture(:stdout) {TestRail::TestRailTools.prepare_config(125, nil, "Command")}
     end
 
     it 'should setup test run id' do

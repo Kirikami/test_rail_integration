@@ -95,7 +95,7 @@ describe CLI do
 
       end
 
-      context 'and have parameter showroom'
+      context 'and have parameter showroom' do
 
       before do
         allow(TestRail::Connection).to receive(:test_run_name).and_return("AT vn showroom new")
@@ -107,21 +107,23 @@ describe CLI do
         result = capture(:stdout) {@subject.shoot}
         expect(result).to include("cucumber -p lazada.vn.showroom SR = 'showroom_name'")
       end
-    end
+      end
 
+      context 'and have command parameter' do
+        before do
+          allow(TestRail::Connection).to receive(:test_run_name).and_return("AT vn showroom new")
+          allow(TestRail::Connection).to receive(:cases_id).and_return(["11","22","33"])
+          @subject.options = {test_run_id: 777, command: 'Command'}
+        end
+
+        it 'should write command executable command' do
+          result = capture(:stdout) {@subject.shoot}
+          p result
+          expect(result).to include("Command @C11,@C22,@C33")
+        end
+      end
+    end
   end
-
-  context 'when executing change_command' do
-    before do
-      @subject.options = {:command => 'Command'}
-    end
-
-    it 'should write command executable command' do
-      @subject.change_command
-      expect(File.read('config/data/test_rail_data.yml')).to include ":exec_command: Command"
-    end
-  end
-
 end
 
 

@@ -24,10 +24,12 @@ class CLI < Thor
        --test_run_id for run id,\n
         optional:
        --venture for describing venture\n
-       --showroom with showroom name where start tests"
+       --showroom with showroom name where start tests
+       --command with new command"
   option :test_run_id
   option :venture
   option :showroom
+  option :command
   def shoot
     if options[:test_run_id]
       run_id = options[:test_run_id]
@@ -37,17 +39,12 @@ class CLI < Thor
       if name_of_environment[2] == "showroom"
         environment_for_run[1] = environment_for_run[1] + " SR = '#{options[:showroom]}'"
       end
-      TestRailTools.prepare_config(run_id, environment_for_run)
+      command = options[:command] if options[:command]
+      TestRailTools.prepare_config(run_id, environment_for_run, command)
     else
       puts "You must set correct test run id through --test_run_id"
     end
 
-  end
-
-  desc "change_command", "Change command for running --command"
-  option :command
-  def change_command
-    TestRailTools.write_executable_command(options[:command])
   end
 
 end
