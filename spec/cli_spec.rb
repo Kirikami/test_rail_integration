@@ -109,19 +109,6 @@ describe CLI do
       end
       end
 
-      context 'and have command parameter' do
-        before do
-          allow(TestRail::Connection).to receive(:test_run_name).and_return("AT vn showroom new")
-          allow(TestRail::Connection).to receive(:cases_id).and_return(["11","22","33"])
-          @subject.options = {test_run_id: 777, command: 'Command'}
-        end
-
-        it 'should write command executable command' do
-          result = capture(:stdout) {@subject.shoot}
-          p result
-          expect(result).to include("Command @C11,@C22,@C33")
-        end
-      end
     end
   end
 end

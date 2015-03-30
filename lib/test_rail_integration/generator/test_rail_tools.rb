@@ -17,11 +17,10 @@ module TestRail
       #TODO do smth with weird replacement
       command = parameters.command.gsub("\#{parameters.venture}", parameters.venture).gsub("\#{parameters.environment}", parameters.environment) + " " + Connection.cases_id(id_of_run).map { |id| "@C"+id.to_s }.join(",")
       p command
-      run_cucumber(command)
     end
 
     def self.run_cucumber(command)
-      # exec("#{command}")
+      exec("#{command}")
     end
 
     #
