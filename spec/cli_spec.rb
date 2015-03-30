@@ -1,5 +1,7 @@
 require 'rspec'
 require_relative '../lib/test_rail_integration/cli'
+require_relative '../lib/test_rail_integration/generator/connection'
+
 
 describe CLI do
 
@@ -13,21 +15,11 @@ describe CLI do
       @subject.perform
     end
 
-    it 'run_test_run.rb should be copied' do
-      expect(File.exist?('run_test_run.rb')).to eq(true)
-    end
-
-    it 'copied run_test_run.rb should be identical' do
-      expect(File.read('run_test_run.rb')).to eq(File.read('lib/test_rail_integration/generator/project/run_test_run.rb'))
-    end
-
     it 'test_rail_data.yml should be copied' do
       expect(File.exist?('config/data/test_rail_data.yml')).to eq(true)
     end
 
     it 'copied test_rail_data.yml should be identical' do
-      expect(File.exist?('run_test_run.rb')).to eq(true)
-      expect(File.read('run_test_run.rb')).to eq(File.read('lib/test_rail_integration/generator/project/run_test_run.rb'))
       expect(File.exist?('config/data/test_rail_data.yml')).to eq(true)
       expect(File.read('config/data/test_rail_data.yml')).to eq(File.read('lib/test_rail_integration/generator/project/test_rail_data.yml'))
     end
@@ -71,4 +63,70 @@ describe CLI do
 
   end
 
+  describe 'when executing run cli command' do
+
+    describe 'when run command receive arguments' do
+
+      context 'test run id' do
+
+        before(:each) do
+          allow(TestRail::Connection).to receive(:test_run_name).and_return("AT id staging new")
+          allow(TestRail::Connection).to receive(:cases_id).and_return(["11","22","33"])
+          @subject.options = {test_run_id: 777}
+        end
+
+        it 'should check the name of test run and create command' do
+          result = capture(:stdout) {@subject.shoot}
+          expect(result).to include("cucumber -p lazada.id.staging")
+        end
+
+        context 'and venture for run' do
+
+          before do
+            @subject.options = {test_run_id: 777, venture: "vn"}
+          end
+
+          it 'should check the name of test run but create command with predefined venture' do
+            result = capture(:stdout) {@subject.shoot}
+            expect(result).to include("cucumber -p lazada.vn.staging")
+          end
+
+        end
+
+      end
+
+      context 'and have parameter showroom'
+
+      before do
+        allow(TestRail::Connection).to receive(:test_run_name).and_return("AT vn showroom new")
+        allow(TestRail::Connection).to receive(:cases_id).and_return(["11","22","33"])
+        @subject.options = {test_run_id: 777, showroom: "showroom_name"}
+      end
+
+      it 'should create command with showroom received in parameters' do
+        result = capture(:stdout) {@subject.shoot}
+        expect(result).to include("cucumber -p lazada.vn.showroom SR = 'showroom_name'")
+      end
+    end
+
+  end
+
+  context 'when executing change_command' do
+    before do
+      @subject.options = {:command => 'Command'}
+    end
+
+    it 'should write command executable command' do
+      @subject.change_command
+      expect(File.read('config/data/test_rail_data.yml')).to include ":exec_command: Command"
+    end
+  end
+
 end
+
+
+
+
+
+
+
