@@ -25,18 +25,17 @@ class CLI < Thor
   desc "create_test_run", "Create test run with name. Set test run name through --test_run_name parameter"
   option :test_run_name
   def create_test_run
-    test_run_id = nil
     test_run_name = options[:test_run_name]
     if test_run_name
       if test_run_name == ''
         puts "Test_run_name parameter should not be empty"
       else
-        test_run_id = JSON.parse(TestRail::Connection.create_test_run_with_name(options[:test_run_name]))[:"id"]
+        command_result = TestRail::Connection.create_test_run_with_name(test_run_name)
+        puts "You successfully created test run with id #{JSON.parse(command_result)["id"]}"
       end
     else
       puts "You must set correct test run name through --test_run_name\n"
     end
-    test_run_id
   end
 end
 

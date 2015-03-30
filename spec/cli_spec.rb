@@ -103,13 +103,9 @@ describe CLI do
         @subject.create_test_run
       end
 
-      it 'should not see a output' do
+      it 'should see created test run id in output' do
         result = capture(:stdout) { @subject.create_test_run }
-        expect(result).to eq("")
-      end
-
-      it 'should create test run with name' do
-      expect(subject.create_test_run).to eq('561')
+        expect(result).to eq("You successfully created test run with id 561\n")
       end
 
     end
