@@ -107,39 +107,39 @@ describe CLI do
         expect(result).to eq("\"Gem will execute command: cucumber -p lazada.id.staging TESTRAIL=1 --color -f json -o cucumber.json -t @C11,@C22,@C33\"\n")
       end
 
-      context 'and passing venture param' do
+        context 'and passing venture param' do
 
-        before(:each) do
-          @subject.options[:venture] = 'vn'
+          before(:each) do
+            @subject.options[:venture] = 'vn'
+          end
+
+          it 'should execute correct command' do
+            result = capture(:stdout) { @subject.shoot }
+            expect(result).to eq("\"Gem will execute command: cucumber -p lazada.vn.staging TESTRAIL=1 --color -f json -o cucumber.json -t @C11,@C22,@C33\"\n")
+          end
+
+          after(:each) do
+            @subject.options.delete("venture")
+          end
+
         end
 
-        it 'should execute correct command' do
-          result = capture(:stdout) { @subject.shoot }
-          expect(result).to eq("\"Gem will execute command: cucumber -p lazada.vn.staging TESTRAIL=1 --color -f json -o cucumber.json -t @C11,@C22,@C33\"\n")
+        context 'and passing env param' do
+
+          before(:each) do
+            @subject.options[:env] = 'live_test'
+          end
+
+          it 'should execute correct command' do
+            result = capture(:stdout) { @subject.shoot }
+            expect(result).to eq("\"Gem will execute command: cucumber -p lazada.id.live_test TESTRAIL=1 --color -f json -o cucumber.json -t @C11,@C22,@C33\"\n")
+          end
+
+          after(:all) do
+            @subject.options.delete("env")
+          end
+
         end
-
-        after(:each) do
-          @subject.options.delete("venture")
-        end
-
-      end
-
-      context 'and passing env param' do
-
-        before(:each) do
-          @subject.options[:env] = 'live_test'
-        end
-
-        it 'should execute correct command' do
-          result = capture(:stdout) { @subject.shoot }
-          expect(result).to eq("\"Gem will execute command: cucumber -p lazada.id.live_test TESTRAIL=1 --color -f json -o cucumber.json -t @C11,@C22,@C33\"\n")
-        end
-
-        after(:all) do
-          @subject.options.delete("env")
-        end
-
-      end
 
       after(:all) do
         @subject.options.clear
