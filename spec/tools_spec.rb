@@ -8,11 +8,10 @@ describe 'Test Rail tools' do
   describe 'run cucumber command method' do
     before do
       allow(TestRail::Connection).to receive(:cases_id).and_return([1011, 1111])
-      @result = capture(:stdout) { TestRail::TestRailTools.generate_executable_command(121, nil, "Command"  ) }
     end
 
     it 'should generate command' do
-      expect(@result).to include 'Command @C1011,@C1111'
+      expect(TestRail::TestRailTools.generate_executable_command(121, nil, "Command"  )).to eq 'Command @C1011,@C1111'
     end
 end
 

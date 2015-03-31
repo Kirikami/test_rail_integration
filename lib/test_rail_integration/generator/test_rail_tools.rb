@@ -16,7 +16,7 @@ module TestRail
       parameters = TestRunParameters.new(env, command)
       #TODO do smth with weird replacement
       command = parameters.command.gsub("\#{parameters.venture}", parameters.venture).gsub("\#{parameters.environment}", parameters.environment) + " " + Connection.cases_id(id_of_run).map { |id| "@C"+id.to_s }.join(",")
-      p command
+      command
     end
 
     def self.run_cucumber(id_of_run, env = nil, command = nil)

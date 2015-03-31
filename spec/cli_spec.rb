@@ -62,55 +62,6 @@ describe CLI do
     end
 
   end
-
-  describe 'when executing run cli command' do
-
-    describe 'when run command receive arguments' do
-
-      context 'test run id' do
-
-        before(:each) do
-          allow(TestRail::Connection).to receive(:test_run_name).and_return("AT id staging new")
-          allow(TestRail::Connection).to receive(:cases_id).and_return(["11","22","33"])
-          @subject.options = {test_run_id: 777}
-        end
-
-        it 'should check the name of test run and create command' do
-          result = capture(:stdout) {@subject.shoot}
-          expect(result).to include("cucumber -p lazada.id.staging")
-        end
-
-        context 'and venture for run' do
-
-          before do
-            @subject.options = {test_run_id: 777, venture: "vn"}
-          end
-
-          it 'should check the name of test run but create command with predefined venture' do
-            result = capture(:stdout) {@subject.shoot}
-            expect(result).to include("cucumber -p lazada.vn.staging")
-          end
-
-        end
-
-      end
-
-      context 'and have parameter showroom' do
-
-      before do
-        allow(TestRail::Connection).to receive(:test_run_name).and_return("AT vn showroom new")
-        allow(TestRail::Connection).to receive(:cases_id).and_return(["11","22","33"])
-        @subject.options = {test_run_id: 777, showroom: "showroom_name"}
-      end
-
-      it 'should create command with showroom received in parameters' do
-        result = capture(:stdout) {@subject.shoot}
-        expect(result).to include("cucumber -p lazada.vn.showroom SR = 'showroom_name'")
-      end
-      end
-
-    end
-  end
 end
 
 
