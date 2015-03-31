@@ -24,6 +24,6 @@ module TestRail
     environment_for_run = name_of_environment[1], name_of_environment[2] if name_of_environment
     environment_for_run[0] = parameters[1] if parameters.size > 1
   end
-  TestRailTools.prepare_config(id_of_run, environment_for_run)
+  TestRailTools.prepare_and_execute_config(id_of_run, environment_for_run)
 end
 

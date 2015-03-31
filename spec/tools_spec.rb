@@ -27,23 +27,4 @@ end
 
   end
 
-  describe 'prepare config' do
-    before do
-      allow(TestRail::Connection).to receive(:cases_id).and_return([1011, 1111])
-      @result = capture(:stdout) {TestRail::TestRailTools.prepare_config(125, nil, "Command")}
-    end
-
-    it 'should setup test run id' do
-      expect(TestRail::Connection.test_run_id).to eq(125)
-    end
-
-    it 'should write test run id into file' do
-      expect(File.read('config/data/test_rail_data.yml')).to include ":test_run_id: 125"
-    end
-
-    it 'should run cucumber executable command' do
-      expect(@result).to include 'Command @C1011,@C1111'
-    end
-
-  end
 end

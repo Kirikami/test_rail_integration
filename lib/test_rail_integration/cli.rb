@@ -40,7 +40,7 @@ class CLI < Thor
         environment_for_run[1] = environment_for_run[1] + " SR = '#{options[:showroom]}'"
       end
       command = options[:command] if options[:command]
-      TestRailTools.prepare_config(run_id, environment_for_run, command)
+      TestRailTools.prepare_and_execute_config(run_id, environment_for_run, command)
     else
       puts "You must set correct test run id through --test_run_id"
     end
