@@ -12,15 +12,6 @@ describe 'Test Rail tools' do
       @command = "cucumber -p lazada.vn.staging TESTRAIL=1 --color -f json -o cucumber.json -t @C1011,@C1111"
     end
 
-    context 'with test run id only' do
-
-      it 'should generate standard command' do
-        result = TestRail::TestRailTools.generate_executable_command(121)
-        expect(result).to eq "???"
-      end
-
-    end
-
     context 'with test run id and venture' do
 
       it 'should generate standard command' do

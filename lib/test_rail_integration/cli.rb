@@ -58,7 +58,7 @@ class CLI < Thor
   def auto
     run_id = options[:run_id]
     environment_for_run = options[:venture], options[:env]
-    TestRailTools.prepare_and_execute_config(run_id, environment_for_run)
+    TestRailTools.run_cucumber(run_id, environment_for_run)
   end
 
 end

@@ -107,6 +107,18 @@ describe CLI do
 
     end
   end
+
+  context 'when execute auto cli command' do
+    before do
+      allow(TestRail::Connection).to receive(:cases_id).and_return(["11", "22", "33"])
+      @subject.options = {test_run_id: 777, venture: 'sg', env: 'staging'}
+    end
+
+    it 'should call execution command' do
+      expect(TestRail::TestRailTools).to receive(:exec)
+      @subject.auto
+    end
+  end
 end
 
 
