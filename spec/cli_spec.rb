@@ -63,9 +63,9 @@ describe CLI do
 
   end
 
-  describe 'when executing shoot cli command' do
+  context 'when executing shoot cli command' do
 
-    before(:each) do
+    before do
       allow(TestRail::Connection).to receive(:test_run_name).and_return("AT id staging new")
       allow(TestRail::Connection).to receive(:cases_id).and_return(["11", "22", "33"])
       @subject.options = {test_run_id: 777}
@@ -74,6 +74,18 @@ describe CLI do
     it 'should call execution command' do
       expect(TestRail::TestRailTools).to receive(:exec)
       @subject.shoot
+    end
+  end
+
+  context 'when execute auto cli command' do
+    before do
+      allow(TestRail::Connection).to receive(:cases_id).and_return(["11", "22", "33"])
+      @subject.options = {test_run_id: 777, venture: 'sg', env: 'staging'}
+    end
+
+    it 'should call execution command' do
+      expect(TestRail::TestRailTools).to receive(:exec)
+      @subject.auto
     end
   end
 end

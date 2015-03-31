@@ -21,10 +21,11 @@ class CLI < Thor
   end
 
   desc "shoot", "Run Test Rail integration with \n
-       --test_run_id for run id,\n
+       --test_run_id for run id,
         optional:
-       --venture for describing venture\n
-       --showroom with showroom name where start tests
+       --venture for describing venture,
+       --env for describing environment for run,
+       --showroom with showroom name where start tests,
        --command with new command"
   option :test_run_id
   option :venture
@@ -36,6 +37,7 @@ class CLI < Thor
       name_of_environment = Connection.test_run_name(run_id).downcase.match(/(#{TestRunParameters::VENTURE_REGEX}) (#{TestRunParameters::ENVIRONMENT_REGEX})*/)
       environment_for_run = name_of_environment[1], name_of_environment[2] if name_of_environment
       environment_for_run[0] = options[:venture] if options[:venture]
+      environment_for_run[1] = options[:env] if options[:env]
       if name_of_environment[2] == "showroom"
         environment_for_run[1] = environment_for_run[1] + " SR = '#{options[:showroom]}'"
       end
@@ -45,6 +47,16 @@ class CLI < Thor
       puts "You must set correct test run id through --test_run_id"
     end
 
+  end
+
+  desc "auto", "Automatically run with --run_id, --venture, --env parameters"
+  option :run_id
+  option :venture
+  option :env
+  def auto
+    run_id = options[:run_id]
+    environment_for_run = options[:venture], options[:env]
+    TestRailTools.prepare_and_execute_config(run_id, environment_for_run)
   end
 
 end
