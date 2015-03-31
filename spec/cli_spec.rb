@@ -59,33 +59,52 @@ describe CLI do
         expect(result).to eq('')
       end
 
+      after(:all) do
+        @subject.options.clear
+      end
+
     end
 
   end
 
   context 'when executing shoot cli command' do
 
-    before do
-      allow(TestRail::Connection).to receive(:test_run_name).and_return("AT id staging new")
-      allow(TestRail::Connection).to receive(:cases_id).and_return(["11", "22", "33"])
-      @subject.options = {test_run_id: 777}
+    context 'and not passing required param' do
+
+      before(:each) do
+        allow(TestRail::Connection).to receive(:test_run_name).and_return("AT id staging new")
+        allow(TestRail::Connection).to receive(:cases_id).and_return(["11", "22", "33"])
+      end
+
+      it 'should not execute command once' do
+        expect(TestRail::TestRailTools).not_to receive(:exec)
+        @subject.shoot
+      end
+
+      it 'should see output ' do
+        result = capture(:stdout) { @subject.shoot }
+        expect(result).to eq("You must set correct test run id through --test_run_id\n")
+      end
+
     end
 
-    it 'should call execution command' do
-      expect(TestRail::TestRailTools).to receive(:exec)
-      @subject.shoot
-    end
-  end
+    context 'and passing required params' do
 
-  context 'when execute auto cli command' do
-    before do
-      allow(TestRail::Connection).to receive(:cases_id).and_return(["11", "22", "33"])
-      @subject.options = {test_run_id: 777, venture: 'sg', env: 'staging'}
-    end
+      before(:each) do
+        allow(TestRail::Connection).to receive(:test_run_name).and_return("AT id staging new")
+        allow(TestRail::Connection).to receive(:cases_id).and_return(["11", "22", "33"])
+        @subject.options = {:test_run_id => 777}
+      end
 
-    it 'should call execution command' do
-      expect(TestRail::TestRailTools).to receive(:exec)
-      @subject.auto
+      it 'should call execution command' do
+        expect(TestRail::TestRailTools).to receive(:exec)
+        @subject.shoot
+      end
+
+      after(:all) do
+        @subject.options.clear
+      end
+
     end
   end
 end

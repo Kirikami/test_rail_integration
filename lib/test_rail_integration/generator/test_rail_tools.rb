@@ -20,7 +20,7 @@ module TestRail
     end
 
     def self.run_cucumber(id_of_run, env = nil, command = nil)
-      exec_command = generate_executable_command(id_of_run, env = nil, command = nil)
+      exec_command = generate_executable_command(id_of_run, env, command)
       exec("#{exec_command}")
     end
 
@@ -34,14 +34,6 @@ module TestRail
       config_file.close
     end
 
-    #
-    # Prepare config and execute command for running tests
-    #
-    def self.prepare_and_execute_config(run_id, env = nil, command = nil)
-      Connection.test_run_id = run_id
-      write_test_run_id(run_id)
-      run_cucumber(run_id, env, command)
-    end
   end
 end
 
