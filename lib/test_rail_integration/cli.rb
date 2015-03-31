@@ -41,8 +41,12 @@ class CLI < Thor
       environment_for_run = name_of_environment[1], name_of_environment[2] if name_of_environment
       environment_for_run[0] = options[:venture] if options[:venture]
       environment_for_run[1] = options[:env] if options[:env]
-      if name_of_environment[2] == "showroom"
-        environment_for_run[1] = environment_for_run[1] + " SR = '#{options[:showroom]}'"
+      if environment_for_run[1] == "showroom"
+        if options[:showroom]
+          environment_for_run[1] = environment_for_run[1] + " SR='#{options[:showroom]}'"
+        else
+          puts "You should provide --showroom parameter to execute run on showroom profile"
+        end
       end
       command = options[:command] if options[:command]
       Connection.test_run_id = run_id

@@ -118,6 +118,11 @@ describe CLI do
             expect(result).to eq("\"Gem will execute command: cucumber -p lazada.vn.staging TESTRAIL=1 --color -f json -o cucumber.json -t @C11,@C22,@C33\"\n")
           end
 
+          it 'should call execution command' do
+            expect(TestRail::TestRailTools).to receive(:exec)
+            @subject.shoot
+          end
+
           after(:each) do
             @subject.options.delete("venture")
           end
@@ -135,8 +140,61 @@ describe CLI do
             expect(result).to eq("\"Gem will execute command: cucumber -p lazada.id.live_test TESTRAIL=1 --color -f json -o cucumber.json -t @C11,@C22,@C33\"\n")
           end
 
+          it 'should call execution command' do
+            expect(TestRail::TestRailTools).to receive(:exec)
+            @subject.shoot
+          end
+
           after(:all) do
             @subject.options.delete("env")
+          end
+
+        end
+
+        context 'and passing showroom env param' do
+
+          before(:each) do
+            @subject.options[:env] = "showroom"
+          end
+
+          context 'and not passing SR param' do
+
+            it 'should see message in output' do
+              result = capture(:stdout) { @subject.shoot }
+              expect(result).to eq("You should provide --showroom parameter to execute run on showroom profile")
+            end
+
+            it 'should call execution command' do
+              expect(TestRail::TestRailTools).not_to receive(:exec)
+              @subject.shoot
+            end
+
+          end
+
+          context 'and passing SR param' do
+
+            before(:each) do
+              @subject.options[:showroom] = '111'
+            end
+
+            it 'should call execution command' do
+              expect(TestRail::TestRailTools).to receive(:exec)
+              @subject.shoot
+            end
+
+            it 'should execute correct command' do
+              result = capture(:stdout) { @subject.shoot }
+              expect(result).to eq("\"Gem will execute command: cucumber -p lazada.id.showroom SR='111' TESTRAIL=1 --color -f json -o cucumber.json -t @C11,@C22,@C33\"\n")
+            end
+
+            after(:each) do
+              @subject.options.delete("showroom")
+            end
+
+          end
+
+          after(:all) do
+            @subject.options.delete("showroom")
           end
 
         end
