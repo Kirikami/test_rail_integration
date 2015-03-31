@@ -164,7 +164,7 @@ describe CLI do
               expect(result).to eq("You should provide --showroom parameter to execute run on showroom profile")
             end
 
-            it 'should call execution command' do
+            it 'should not call execution command' do
               expect(TestRail::TestRailTools).not_to receive(:exec)
               @subject.shoot
             end
