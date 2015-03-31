@@ -45,7 +45,7 @@ class CLI < Thor
         if options[:showroom]
           environment_for_run[1] = environment_for_run[1] + " SR='#{options[:showroom]}'"
         else
-          puts "You should provide --showroom parameter to execute run on showroom profile"
+          environment_for_run[1] = environment_for_run[1]
         end
       end
       command = options[:command] if options[:command]

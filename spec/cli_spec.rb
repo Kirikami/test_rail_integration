@@ -159,13 +159,13 @@ describe CLI do
 
           context 'and not passing SR param' do
 
-            it 'should see message in output' do
+            it 'should execute correct command' do
               result = capture(:stdout) { @subject.shoot }
-              expect(result).to eq("You should provide --showroom parameter to execute run on showroom profile")
+              expect(result).to eq("\"Gem will execute command: cucumber -p lazada.id.showroom TESTRAIL=1 --color -f json -o cucumber.json -t @C11,@C22,@C33\"\n")
             end
 
-            it 'should not call execution command' do
-              expect(TestRail::TestRailTools).not_to receive(:exec)
+            it 'should call execution command' do
+              expect(TestRail::TestRailTools).to receive(:exec)
               @subject.shoot
             end
 
