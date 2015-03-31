@@ -1,6 +1,7 @@
 require 'thor'
 require_relative 'generator/project'
 require_relative 'generator/project/check'
+require_relative 'generator/test_run_creation'
 
 class CLI < Thor
   include TestRail
@@ -26,11 +27,13 @@ class CLI < Thor
        --venture for describing venture,
        --env for describing environment for run,
        --showroom with showroom name where start tests,
-       --command with new command"
+       --command with new command
+       --auto for creating test run automatically and push all information inside"
   option :test_run_id
   option :venture
   option :showroom
   option :command
+  option :auto
   def shoot
     if options[:test_run_id]
       run_id = options[:test_run_id]
@@ -45,21 +48,14 @@ class CLI < Thor
       Connection.test_run_id = run_id
       TestRailTools.write_test_run_id(run_id)
       TestRailTools.run_cucumber(run_id, environment_for_run, command)
+    elsif options[:auto]
+      run_id = TestRunCreation.initialize_test_run
+      environment_for_run = options[:venture], options[:env]
+      TestRailTools.run_cucumber(run_id, environment_for_run)
     else
       puts "You must set correct test run id through --test_run_id"
     end
 
   end
-
-  desc "auto", "Automatically run with --run_id, --venture, --env parameters"
-  option :run_id
-  option :venture
-  option :env
-  def auto
-    run_id = options[:run_id]
-    environment_for_run = options[:venture], options[:env]
-    TestRailTools.run_cucumber(run_id, environment_for_run)
-  end
-
 end
 
