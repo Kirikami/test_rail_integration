@@ -47,11 +47,11 @@ class CLI < Thor
       command = options[:command] if options[:command]
       Connection.test_run_id = run_id
       TestRailTools.write_test_run_id(run_id)
-      TestRailTools.run_cucumber(run_id, environment_for_run, command)
+      TestRailTools.execute_generated_command(run_id, environment_for_run, command)
     elsif options[:auto]
       run_id = TestRunCreation.initialize_test_run
       environment_for_run = options[:venture], options[:env]
-      TestRailTools.run_cucumber(run_id, environment_for_run)
+      TestRailTools.execute_generated_command(run_id, environment_for_run)
     else
       puts "You must set correct test run id through --test_run_id"
     end

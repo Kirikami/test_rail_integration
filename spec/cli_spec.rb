@@ -88,17 +88,57 @@ describe CLI do
 
     end
 
-    context 'and passing required params' do
+    context 'and passing test_run_id param' do
 
       before(:each) do
         allow(TestRail::Connection).to receive(:test_run_name).and_return("AT id staging new")
         allow(TestRail::Connection).to receive(:cases_id).and_return(["11", "22", "33"])
+        allow(TestRail::TestRailTools).to receive(:exec).and_return("Ok")
         @subject.options = {:test_run_id => 777}
       end
 
       it 'should call execution command' do
         expect(TestRail::TestRailTools).to receive(:exec)
         @subject.shoot
+      end
+
+      it 'should execute correct command' do
+        result = capture(:stdout) { @subject.shoot }
+        expect(result).to eq("\"Gem will execute command: cucumber -p lazada.id.staging TESTRAIL=1 --color -f json -o cucumber.json -t @C11,@C22,@C33\"\n")
+      end
+
+      context 'and passing venture param' do
+
+        before(:each) do
+          @subject.options[:venture] = 'vn'
+        end
+
+        it 'should execute correct command' do
+          result = capture(:stdout) { @subject.shoot }
+          expect(result).to eq("\"Gem will execute command: cucumber -p lazada.vn.staging TESTRAIL=1 --color -f json -o cucumber.json -t @C11,@C22,@C33\"\n")
+        end
+
+        after(:each) do
+          @subject.options.delete("venture")
+        end
+
+      end
+
+      context 'and passing env param' do
+
+        before(:each) do
+          @subject.options[:env] = 'live_test'
+        end
+
+        it 'should execute correct command' do
+          result = capture(:stdout) { @subject.shoot }
+          expect(result).to eq("\"Gem will execute command: cucumber -p lazada.id.live_test TESTRAIL=1 --color -f json -o cucumber.json -t @C11,@C22,@C33\"\n")
+        end
+
+        after(:all) do
+          @subject.options.delete("env")
+        end
+
       end
 
       after(:all) do
@@ -108,17 +148,6 @@ describe CLI do
     end
   end
 
-  context 'when execute auto cli command' do
-    before do
-      allow(TestRail::Connection).to receive(:cases_id).and_return(["11", "22", "33"])
-      @subject.options = {test_run_id: 777, venture: 'sg', env: 'staging'}
-    end
-
-    it 'should call execution command' do
-      expect(TestRail::TestRailTools).to receive(:exec)
-      @subject.auto
-    end
-  end
 end
 
 

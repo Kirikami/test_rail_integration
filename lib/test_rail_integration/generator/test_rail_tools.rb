@@ -19,8 +19,9 @@ module TestRail
       command
     end
 
-    def self.run_cucumber(id_of_run, env = nil, command = nil)
+    def self.execute_generated_command(id_of_run, env = nil, command = nil)
       exec_command = generate_executable_command(id_of_run, env, command)
+      p "Gem will execute command: #{exec_command}"
       exec("#{exec_command}")
     end
 
