@@ -1,11 +1,11 @@
 :connection_data:
-  :url: https://mlp.testrail.com
-  :username: Twilight
-  :password: Sparkle
+  :url: #put here url of your TestRail server
+  :username: #TestRail username
+  :password: #Password for TestRail user
 
-:project: 2 # Test project id can be found in Test Rail
-:test_suite: 63 # Test suite id can be found in Test Rail
-:assigned_to: 27 # Id of person could be found in Test Rail
+:project: # Test project id can be found in Test Rail
+:test_suite: # Test suite id can be found in Test Rail
+:assigned_to: # Id of person could be found in Test Rail
 :description_of_run: "Automatically generated report by auto tests."
 
 :status_comment: 0
@@ -22,9 +22,9 @@
 
 :in_progress: " (in progress)" #value for changing test run name for monitoring complete of test run
 
-:test_run_id: 513
+:test_run_id: 777
 
-:exec_command: "cucumber -p lazada.#{parameters.venture}.#{parameters.environment} TESTRAIL=1 --format AllureCucumber::Formatter DRIVER=grid SELENIUM_GRID_SERVER_URL=http://192.168.100.1:4444/wd/hub -t  "
+:exec_command: "cucumber -p lazada.#{parameters.venture}.#{parameters.environment} TESTRAIL=1 --color -f json -o cucumber.json -t"
 
-:types: 4 #types for filtering from Test Rail
+:types: #types for filtering from Test Rail
 

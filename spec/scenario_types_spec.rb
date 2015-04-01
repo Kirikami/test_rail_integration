@@ -4,10 +4,6 @@ require_relative '../lib/test_rail_integration/generator/test_rail_hooks'
 
 describe 'Scenario types' do
 
-  before(:all) do
-    ENV['rspec-tests-running'] = '1'
-  end
-
   context 'when scenario outline received' do
 
     before(:each) do

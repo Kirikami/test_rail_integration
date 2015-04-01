@@ -6,23 +6,23 @@ module TestRail
   class TestRailTools
 
     #
-    # Method generates executable cucumber file
-    #
-    # generate_cucumber_execution_file(2)
+    # Method generates executable command
     #
     # cucumber -p profile.vn.live_test TESTRAIL=1 --color -f json -o cucumber.json -t  @C666,@C777,@C555
     #
     # change this method for create your own cucumber executable
     #
-    def self.generate_cucumber_execution_file(id_of_run, env = nil)
-      parameters = TestRunParameters.new(env)
+    def self.generate_executable_command(id_of_run, env = nil, command = nil)
+      parameters = TestRunParameters.new(env, command)
       #TODO do smth with weird replacement
-      command = parameters.command.gsub("\#{parameters.venture}", parameters.venture).gsub("\#{parameters.environment}", parameters.environment) + Connection.cases_id(id_of_run).map { |id| "@C"+id.to_s }.join(",")
-      cucumber_file = File.new("cucumber_run.sh", "w")
-      cucumber_file.chmod(0700)
-      cucumber_file.write("#!/bin/sh\n")
-      cucumber_file.write(command)
-      cucumber_file.close
+      command = parameters.command.gsub("\#{parameters.venture}", parameters.venture).gsub("\#{parameters.environment}", parameters.environment) + " " + Connection.cases_id(id_of_run).map { |id| "@C"+id.to_s }.join(",")
+      command
+    end
+
+    def self.execute_generated_command(id_of_run, env = nil, command = nil)
+      exec_command = generate_executable_command(id_of_run, env, command)
+      p "Gem will execute command: #{exec_command}"
+      exec("#{exec_command}")
     end
 
     #
@@ -33,16 +33,9 @@ module TestRail
       config_file = File.open(TestRailDataLoad::TEST_RAIL_FILE_CONFIG_PATH, "w")
       config_file.write (test_rail_data_file)
       config_file.close
+      test_run_id
     end
 
-    #
-    # Preparation for create right cucumber executable file
-    #
-    def self.prepare_config(run_id, env = nil)
-      Connection.test_run_id = run_id
-      write_test_run_id(run_id)
-      generate_cucumber_execution_file(run_id, env)
-    end
   end
 end
 
