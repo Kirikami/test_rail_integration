@@ -343,7 +343,7 @@ describe CLI do
 
           before(:each) do
             @subject.options[:venture] = 'id'
-            @subject.options[:env] = 'live'
+            @subject.options[:env] = 'live_test'
           end
 
           after(:each) do
@@ -358,7 +358,7 @@ describe CLI do
 
           it 'should execute correct command' do
             result = capture(:stdout) { @subject.shoot }
-            expect(result).to eq("\"Gem will execute command: cucumber -p lazada.id.live TESTRAIL=1 --color -f json -o cucumber.json -t @C11,@C22,@C33\"\n")
+            expect(result).to eq("\"Gem will execute command: cucumber -p lazada.id.live_test TESTRAIL=1 --color -f json -o cucumber.json -t @C11,@C22,@C33\"\n")
           end
         end
       end

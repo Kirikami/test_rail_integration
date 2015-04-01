@@ -69,6 +69,18 @@ class CLI < Thor
         end
       end
       command = options[:command] if options[:command]
+      if venture.nil? && env.nil?
+        puts "You must set correct env, venture params through --env, --venture in order to execute command"
+        return
+      end
+      if venture.nil?
+        puts "You must set correct venture param through --venture in order to execute command"
+        return
+      end
+      if env.nil?
+        puts "You must set correct env param through --env in order to execute command"
+        return
+      end
       test_run_parameters = TestRunParameters.new(venture, env, command)
       Connection.test_run_id = test_run_id
       TestRailTools.write_test_run_id(test_run_id)
