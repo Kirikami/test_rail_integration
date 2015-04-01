@@ -67,6 +67,64 @@ describe CLI do
 
   end
 
+  context 'when executing create_test_run command' do
+
+    context 'and not passing test_run_name parameter' do
+
+      it 'should see output message' do
+        result = capture(:stdout) { @subject.create_test_run }
+        expect(result).to eq("You must set correct test run name through --test_run_name\n")
+      end
+
+      it 'should not not call check_test_run_statuses method' do
+        expect(TestRail::Connection).not_to receive(:create_test_run_with_name)
+        @subject.create_test_run
+      end
+
+    end
+
+    context 'and passing test_run_name parameter' do
+
+      before(:all) do
+        @subject.options = {:test_run_name => 'test run name'}
+      end
+
+      before(:each) do
+        allow(TestRail::Connection).to receive(:create_test_run_with_name).and_return(
+                                           {"id" => "561"})
+      end
+
+      it 'should execute command once' do
+        expect(TestRail::Connection).to receive(:create_test_run_with_name)
+        @subject.create_test_run
+      end
+
+      it 'should see created test run id in output' do
+        result = capture(:stdout) { @subject.create_test_run }
+        expect(result).to eq("You successfully created test run with id 561\n")
+      end
+
+    end
+
+    context 'and passing empty test_run_name parameter' do
+
+      before(:all) do
+        @subject.options = {:test_run_name => ''}
+      end
+
+      it 'should not execute command once' do
+        expect(TestRail::Connection).not_to receive(:create_test_run_with_name)
+        @subject.create_test_run
+      end
+
+      it 'should see a output' do
+        result = capture(:stdout) { @subject.create_test_run }
+        expect(result).to eq("Test_run_name parameter should not be empty\n")
+      end
+    end
+
+  end
+
   context 'when executing shoot cli command' do
 
     before(:each) do
@@ -90,53 +148,6 @@ describe CLI do
       it 'should see output ' do
         result = capture(:stdout) { @subject.shoot }
         expect(result).to eq("You must set correct test run id through --test_run_id\n")
-      end
-
-    end
-
-    context 'and not passing auto param' do
-
-      it 'should see output message' do
-        result = capture(:stdout) { @subject.shoot }
-        expect(result).to eq("You must set correct test run id through --test_run_id\n")
-      end
-
-      it 'should not execute command once' do
-        expect(TestRail::TestRailTools).not_to receive(:exec)
-        @subject.shoot
-      end
-
-    end
-
-    context 'and passing auto param flag' do
-
-      before(:each) do
-        @subject.options[:auto] = ''
-        @subject.options[:venture] = 'vn'
-        @subject.options[:env] = 'live_test'
-        allow(TestRail::TestRunCreation).to receive(:check_presence_of_test_run).and_return(true)
-        allow(TestRail::TestRunCreation).to receive(:get_created_test_run_id).and_return("12345")
-      end
-
-      after(:each) do
-        @subject.options.delete("auto")
-        @subject.options.delete("venture")
-        @subject.options.delete("env")
-      end
-
-      it 'should execute correct command' do
-        result = capture(:stdout) { @subject.shoot }
-        expect(result).to eq("\"Gem will execute command: cucumber -p lazada.vn.live_test TESTRAIL=1 --color -f json -o cucumber.json -t @C11,@C22,@C33\"\n")
-      end
-
-      it 'should write test run id in config file' do
-        @subject.shoot
-        expect(YAML.load(File.open(TestRail::TestRailDataLoad::TEST_RAIL_FILE_CONFIG_PATH))[:test_run_id]).to eq(12345)
-      end
-
-      it 'should call execution command' do
-        expect(TestRail::TestRailTools).to receive(:exec)
-        @subject.shoot
       end
 
     end
@@ -270,10 +281,3 @@ describe CLI do
     end
   end
 end
-
-
-
-
-
-
-

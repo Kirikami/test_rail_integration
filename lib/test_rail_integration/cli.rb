@@ -1,7 +1,7 @@
 require 'thor'
 require_relative 'generator/project'
 require_relative 'generator/project/check'
-require_relative 'generator/test_run_creation'
+require_relative 'generator/test_run'
 
 class CLI < Thor
   include TestRail
@@ -21,20 +21,34 @@ class CLI < Thor
     end
   end
 
+  desc "create_test_run", "Create test run with name. Set test run name through --test_run_name parameter"
+  option :test_run_name
+  def create_test_run
+    test_run_name = options[:test_run_name]
+    if test_run_name
+      if test_run_name == ''
+        puts "Test_run_name parameter should not be empty"
+      else
+        test_run = TestRail::TestRun.create(test_run_name)
+        puts "You successfully created test run with id #{test_run.id}"
+      end
+    else
+      puts "You must set correct test run name through --test_run_name\n"
+    end
+  end
+
   desc "shoot", "Run Test Rail integration with \n
        --test_run_id for run id,
         optional:
        --venture for describing venture,
        --env for describing environment for run,
        --showroom with showroom name where start tests,
-       --command with new command
-       --auto for creating test run automatically and push all information inside"
+       --command with new command"
   option :test_run_id
   option :venture
   option :showroom
   option :command
   option :env
-  option :auto
   def shoot
     if options[:test_run_id]
       run_id = options[:test_run_id]
@@ -53,10 +67,6 @@ class CLI < Thor
       Connection.test_run_id = run_id
       TestRailTools.write_test_run_id(run_id)
       TestRailTools.execute_generated_command(run_id, environment_for_run, command)
-    elsif options[:auto]
-      run_id = TestRunCreation.initialize_test_run
-      environment_for_run = options[:venture], options[:env]
-      TestRailTools.execute_generated_command(run_id, environment_for_run)
     else
       puts "You must set correct test run id through --test_run_id"
     end

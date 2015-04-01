@@ -126,27 +126,5 @@ module TestRail
       client.send_post("update_run/#{run_id}", {name: new_name})
     end
 
-    #
-    # Send request for creation test run with name
-    # ("add_run/3", {suite_id: 3, name "New test run", include_all: false, case_ids: C31, C32, C33}
-    #
-    def self.create_new_test_run_with_name
-      client.send_post("add_run/#{project_id}", {suite_id: test_suite_id, name: generate_test_run_name, include_all: false, case_ids: cases_with_types})
-    end
-
-    #
-    # Get all test runs for project
-    #
-    def self.get_test_runs
-      client.send_get("get_runs/#{project_id}")
-    end
-
-    #
-    # Generate name for test run with date
-    #
-    def self.generate_test_run_name
-      "Test run #{Time.now.strftime("%d/%m/%Y")}"
-    end
-
   end
 end

@@ -1,2 +1,4 @@
 .idea/*
 Gemfile.lock
+coverage
+spec/coverage
