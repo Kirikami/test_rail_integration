@@ -59,7 +59,6 @@ class CLI < Thor
     else
       puts "You must set correct test run id through --test_run_id"
     end
-
   end
 end
 

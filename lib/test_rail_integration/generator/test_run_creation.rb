@@ -23,7 +23,6 @@ module TestRail
       created_test_run_id = test_runs.map { |test_run|
         test_run.fetch("id") if test_run.fetch("name").eql? Connection.generate_test_run_name
       }
-      TestRailTools.write_test_run_id(created_test_run_id.first)
       created_test_run_id.first
     end
 
@@ -41,7 +40,8 @@ module TestRail
       unless TestRunCreation.check_presence_of_test_run
         Connection.create_new_test_run_with_name
       end
-      TestRunCreation.get_created_test_run_id
+      created_test_run_id = TestRunCreation.get_created_test_run_id
+      TestRailTools.write_test_run_id(created_test_run_id)
     end
 
   end
