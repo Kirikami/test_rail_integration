@@ -1,6 +1,7 @@
 require 'thor'
 require_relative 'generator/project'
 require_relative 'generator/project/check'
+require_relative 'generator/test_run'
 require 'json'
 
 class CLI < Thor
@@ -29,8 +30,8 @@ class CLI < Thor
       if test_run_name == ''
         puts "Test_run_name parameter should not be empty"
       else
-        command_result = TestRail::Connection.create_test_run_with_name(test_run_name)
-        puts "You successfully created test run with id #{JSON.parse(command_result)["id"]}"
+        test_run = TestRail::TestRun.create(test_run_name)
+        puts "You successfully created test run with id #{test_run.id}"
       end
     else
       puts "You must set correct test run name through --test_run_name\n"

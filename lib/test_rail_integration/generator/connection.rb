@@ -126,12 +126,5 @@ module TestRail
       client.send_post("update_run/#{run_id}", {name: new_name})
     end
 
-    #
-    # Get all test runs for project
-    #
-    def self.get_test_runs
-      client.send_get("get_runs/#{project_id}")
-    end
-
   end
 end
