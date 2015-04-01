@@ -37,7 +37,7 @@ describe 'Test Rail tools' do
     end
 
     it 'should write test run id into file' do
-      expect(File.read('config/data/test_rail_data.yml')).to include ":test_run_id: 123"
+      expect(YAML.load(File.open(TestRail::TestRailDataLoad::TEST_RAIL_FILE_CONFIG_PATH))[:test_run_id]).to eq(123)
     end
 
   end
