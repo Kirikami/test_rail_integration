@@ -12,19 +12,15 @@ module TestRail
     #
     # Checking of correct naming of created test run and return parameters for running test run
     #
-    def initialize(env = nil, command = nil)
-      @venture = ""
-      @environment = ""
-      if env
-        if env[0]
-          @venture = env[0] if env[0].match(/(#{VENTURE_REGEX})/)
-        end
-        if env[1]
-          @environment = env[1] if env[1].match(/(#{ENVIRONMENT_REGEX})/)
-        end
+    def initialize(venture, env, command = nil)
+      if venture
+        self.venture = venture if venture.match(/(#{VENTURE_REGEX})/)
       end
-      @command = EXEC_COMMAND
-      @command = command if command
+      if env
+        self.environment = env if env.match(/(#{ENVIRONMENT_REGEX})/)
+      end
+      self.command = EXEC_COMMAND
+      self.command = command if command
     end
   end
 end

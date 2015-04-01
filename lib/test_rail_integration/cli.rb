@@ -52,21 +52,29 @@ class CLI < Thor
   def shoot
     if options[:test_run_id]
       run_id = options[:test_run_id]
-      name_of_environment = Connection.test_run_name(run_id).downcase.match(/(#{TestRunParameters::VENTURE_REGEX}) (#{TestRunParameters::ENVIRONMENT_REGEX})*/)
-      environment_for_run = name_of_environment[1], name_of_environment[2] if name_of_environment
-      environment_for_run[0] = options[:venture] if options[:venture]
-      environment_for_run[1] = options[:env] if options[:env]
-      if environment_for_run[1] == "showroom"
+      parameters = Connection.test_run_name(run_id).downcase.match(/(#{TestRunParameters::VENTURE_REGEX}) (#{TestRunParameters::ENVIRONMENT_REGEX})*/)
+      venture, env = nil
+
+      if parameters
+        venture = parameters[1]
+        env = parameters[2]
+      end
+      venture = options[:venture] if options[:venture]
+      env = options[:env] if options[:env]
+
+      if env == "showroom"
         if options[:showroom]
-          environment_for_run[1] = environment_for_run[1] + " SR='#{options[:showroom]}'"
+          env = env + " SR='#{options[:showroom]}'"
         else
-          environment_for_run[1] = environment_for_run[1]
+          env = env
         end
       end
+
       command = options[:command] if options[:command]
+
       Connection.test_run_id = run_id
       TestRailTools.write_test_run_id(run_id)
-      TestRailTools.execute_generated_command(run_id, environment_for_run, command)
+      TestRailTools.execute_generated_command(run_id, venture, env, command)
     else
       puts "You must set correct test run id through --test_run_id"
     end
