@@ -33,6 +33,7 @@ module TestRail
       config_file = File.open(TestRailDataLoad::TEST_RAIL_FILE_CONFIG_PATH, "w")
       config_file.write (test_rail_data_file)
       config_file.close
+      test_run_id
     end
 
   end
