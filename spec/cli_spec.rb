@@ -91,7 +91,7 @@ describe CLI do
 
       before(:each) do
         allow(TestRail::Connection).to receive(:create_test_run_with_name).and_return(
-                                           "{\"id\":561,\"suite_id\":63,\"name\":\"Test run 26\\/03\\/2015\"}")
+                                           {"id" => "561"})
       end
 
       it 'should execute command once' do

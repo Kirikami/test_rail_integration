@@ -2,7 +2,6 @@ require 'thor'
 require_relative 'generator/project'
 require_relative 'generator/project/check'
 require_relative 'generator/test_run'
-require 'json'
 
 class CLI < Thor
   include TestRail
