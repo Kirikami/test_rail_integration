@@ -128,17 +128,13 @@ describe CLI do
   context 'when executing shoot cli command' do
 
     before(:each) do
-      allow(TestRail::Connection).to receive(:test_run_name).and_return("AT id staging new")
+      allow(TestRail::Connection).to receive(:test_run_data).and_return(
+                                         {"name" => "AT id staging new"})
       allow(TestRail::Connection).to receive(:cases_id).and_return(["11", "22", "33"])
       allow(TestRail::TestRailTools).to receive(:exec).and_return("Ok")
     end
 
     context 'and not passing test run id param' do
-
-      before(:each) do
-        allow(TestRail::Connection).to receive(:test_run_name).and_return("AT id staging new")
-        allow(TestRail::Connection).to receive(:cases_id).and_return(["11", "22", "33"])
-      end
 
       it 'should not execute command once' do
         expect(TestRail::TestRailTools).not_to receive(:exec)
@@ -191,7 +187,6 @@ describe CLI do
             expect(TestRail::TestRailTools).to receive(:exec)
             @subject.shoot
           end
-
 
         end
 
@@ -283,7 +278,8 @@ describe CLI do
       context 'and not receiving test run with required name' do
 
         before(:each) do
-          allow(TestRail::Connection).to receive(:test_run_name).and_return("Simple test run name")
+          allow(TestRail::Connection).to receive(:test_run_data).and_return(
+                                             {"name" => "Simple test run name"})
         end
 
         context 'and not passing venture param' do

@@ -13,14 +13,12 @@ module TestRail
     # change this method for create your own cucumber executable
     #
     def self.generate_executable_command(id_of_run, venture, env, command = nil)
-      parameters = TestRunParameters.new(venture, env, command)
       #TODO do smth with weird replacement
-      command = parameters.command.gsub("\#{parameters.venture}", parameters.venture).gsub("\#{parameters.environment}", parameters.environment) + " " + Connection.cases_id(id_of_run).map { |id| "@C"+id.to_s }.join(",")
+      command = command.gsub("\#{parameters.venture}", venture).gsub("\#{parameters.environment}", env) + " " + Connection.cases_id(id_of_run).map { |id| "@C"+id.to_s }.join(",")
       command
     end
 
-    def self.execute_generated_command(id_of_run, venture, env, command = nil)
-      exec_command = generate_executable_command(id_of_run, venture, env, command)
+    def self.execute_command(exec_command)
       p "Gem will execute command: #{exec_command}"
       exec("#{exec_command}")
     end
