@@ -2,6 +2,7 @@ require 'thor'
 require_relative 'generator/project'
 require_relative 'generator/project/check'
 require_relative 'generator/test_run'
+require_relative 'generator/command'
 
 class CLI < Thor
   include TestRail
@@ -51,8 +52,8 @@ class CLI < Thor
   option :env
   def shoot
     if options[:test_run_id]
-      run_id = options[:test_run_id]
-      parameters = TestRail::TestRun.get_by_id(run_id).name.downcase.match(/(#{TestRunParameters::VENTURE_REGEX}) (#{TestRunParameters::ENVIRONMENT_REGEX})*/)
+      test_run_id = options[:test_run_id]
+      parameters = TestRail::TestRun.get_by_id(test_run_id).name.downcase.match(/(#{TestRunParameters::VENTURE_REGEX}) (#{TestRunParameters::ENVIRONMENT_REGEX})*/)
       venture, env = nil
       if parameters
         venture = parameters[1]
@@ -69,12 +70,9 @@ class CLI < Thor
       end
       command = options[:command] if options[:command]
       test_run_parameters = TestRunParameters.new(venture, env, command)
-      Connection.test_run_id = run_id
-      TestRailTools.write_test_run_id(run_id)
-      command = TestRail::TestRailTools.generate_executable_command(run_id, test_run_parameters.venture,
-                                                                    test_run_parameters.environment,
-                                                                    test_run_parameters.command)
-      TestRailTools.execute_command(command)
+      Connection.test_run_id = test_run_id
+      TestRailTools.write_test_run_id(test_run_id)
+      TestRail::Command.new(test_run_id, test_run_parameters).execute
     else
       puts "You must set correct test run id through --test_run_id"
     end

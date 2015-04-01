@@ -2,7 +2,6 @@ require 'rspec'
 require_relative '../lib/test_rail_integration/cli'
 require_relative '../lib/test_rail_integration/generator/connection'
 
-
 describe CLI do
 
   before(:all) do
@@ -131,13 +130,13 @@ describe CLI do
       allow(TestRail::Connection).to receive(:test_run_data).and_return(
                                          {"name" => "AT id staging new"})
       allow(TestRail::Connection).to receive(:cases_id).and_return(["11", "22", "33"])
-      allow(TestRail::TestRailTools).to receive(:exec).and_return("Ok")
+      allow(TestRail::Command).to receive(:execute_command).and_return("Ok")
     end
 
     context 'and not passing test run id param' do
 
       it 'should not execute command once' do
-        expect(TestRail::TestRailTools).not_to receive(:exec)
+        expect(TestRail::Command).not_to receive(:execute_command)
         @subject.shoot
       end
 
@@ -159,7 +158,7 @@ describe CLI do
       end
 
       it 'should call execution command' do
-        expect(TestRail::TestRailTools).to receive(:exec)
+        expect(TestRail::Command).to receive(:execute_command)
         @subject.shoot
       end
 
@@ -184,7 +183,7 @@ describe CLI do
           end
 
           it 'should call execution command' do
-            expect(TestRail::TestRailTools).to receive(:exec)
+            expect(TestRail::Command).to receive(:execute_command)
             @subject.shoot
           end
 
@@ -206,7 +205,7 @@ describe CLI do
           end
 
           it 'should call execution command' do
-            expect(TestRail::TestRailTools).to receive(:exec)
+            expect(TestRail::Command).to receive(:execute_command)
             @subject.shoot
           end
 
@@ -230,7 +229,7 @@ describe CLI do
             end
 
             it 'should call execution command' do
-              expect(TestRail::TestRailTools).to receive(:exec)
+              expect(TestRail::Command).to receive(:execute_command)
               @subject.shoot
             end
 
@@ -247,7 +246,7 @@ describe CLI do
             end
 
             it 'should call execution command' do
-              expect(TestRail::TestRailTools).to receive(:exec)
+              expect(TestRail::Command).to receive(:execute_command)
               @subject.shoot
             end
 
@@ -293,7 +292,7 @@ describe CLI do
           end
 
           it 'should not call execution command' do
-            expect(TestRail::TestRailTools).not_to receive(:exec)
+            expect(TestRail::Command).not_to receive(:execute_command)
             @subject.shoot
           end
 
@@ -315,7 +314,7 @@ describe CLI do
           end
 
           it 'should not call execution command' do
-            expect(TestRail::TestRailTools).not_to receive(:exec)
+            expect(TestRail::Command).not_to receive(:execute_command)
             @subject.shoot
           end
 
@@ -329,7 +328,7 @@ describe CLI do
         context 'and not passing venture, env params' do
 
           it 'should not call execution command' do
-            expect(TestRail::TestRailTools).not_to receive(:exec)
+            expect(TestRail::Command).not_to receive(:execute_command)
             @subject.shoot
           end
 
@@ -353,7 +352,7 @@ describe CLI do
           end
 
           it 'should call execution command' do
-            expect(TestRail::TestRailTools).to receive(:exec)
+            expect(TestRail::Command).to receive(:execute_command)
             @subject.shoot
           end
 
