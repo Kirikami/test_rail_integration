@@ -40,7 +40,7 @@ class CLI < Thor
       name_of_environment = Connection.test_run_name(run_id).downcase.match(/(#{TestRunParameters::VENTURE_REGEX}) (#{TestRunParameters::ENVIRONMENT_REGEX})*/)
       environment_for_run = name_of_environment[1], name_of_environment[2] if name_of_environment
       environment_for_run[0] = options[:venture] if options[:venture]
-      environment_for_run = options[:venture], options[:env] if options[:env]
+      environment_for_run[1] = options[:env] if options[:env]
       if environment_for_run[1] == "showroom"
         if options[:showroom]
           environment_for_run[1] = environment_for_run[1] + " SR='#{options[:showroom]}'"
