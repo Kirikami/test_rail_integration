@@ -33,6 +33,7 @@ class CLI < Thor
   option :venture
   option :showroom
   option :command
+  option :env
   option :auto
   def shoot
     if options[:test_run_id]
