@@ -48,6 +48,10 @@ describe CLI do
         @subject.options = {:test_run_id => 12345}
       end
 
+      after(:all) do
+        @subject.options.clear
+      end
+
       it 'should execute command once' do
         expect(TestRail::Check).to receive(:check_test_run_statuses)
         @subject.check_test_run_and_update
@@ -57,10 +61,6 @@ describe CLI do
         allow(TestRail::Check).to receive(:check_test_run_statuses).and_return([])
         result = capture(:stdout) { @subject.check_test_run_and_update }
         expect(result).to eq('')
-      end
-
-      after(:all) do
-        @subject.options.clear
       end
 
     end
@@ -118,6 +118,12 @@ describe CLI do
         allow(TestRail::TestRunCreation).to receive(:get_created_test_run_id).and_return("12345")
       end
 
+      after(:each) do
+        @subject.options.delete("auto")
+        @subject.options.delete("venture")
+        @subject.options.delete("env")
+      end
+
       it 'should execute correct command' do
         result = capture(:stdout) { @subject.shoot }
         expect(result).to eq("\"Gem will execute command: cucumber -p lazada.vn.live_test TESTRAIL=1 --color -f json -o cucumber.json -t @C11,@C22,@C33\"\n")
@@ -133,18 +139,16 @@ describe CLI do
         @subject.shoot
       end
 
-      after(:each) do
-        @subject.options.delete("auto")
-        @subject.options.delete("venture")
-        @subject.options.delete("env")
-      end
-
     end
 
     context 'and passing test_run_id param' do
 
       before(:each) do
         @subject.options = {:test_run_id => 777}
+      end
+
+      after(:all) do
+        @subject.options.clear
       end
 
       it 'should call execution command' do
@@ -163,6 +167,10 @@ describe CLI do
             @subject.options[:venture] = 'vn'
           end
 
+          after(:each) do
+            @subject.options.delete("venture")
+          end
+
           it 'should execute correct command' do
             result = capture(:stdout) { @subject.shoot }
             expect(result).to eq("\"Gem will execute command: cucumber -p lazada.vn.staging TESTRAIL=1 --color -f json -o cucumber.json -t @C11,@C22,@C33\"\n")
@@ -173,9 +181,6 @@ describe CLI do
             @subject.shoot
           end
 
-          after(:each) do
-            @subject.options.delete("venture")
-          end
 
         end
 
@@ -183,6 +188,10 @@ describe CLI do
 
           before(:each) do
             @subject.options[:env] = 'live_test'
+          end
+
+          after(:all) do
+            @subject.options.delete("env")
           end
 
           it 'should execute correct command' do
@@ -195,16 +204,16 @@ describe CLI do
             @subject.shoot
           end
 
-          after(:all) do
-            @subject.options.delete("env")
-          end
-
         end
 
         context 'and passing showroom env param' do
 
           before(:each) do
             @subject.options[:env] = "showroom"
+          end
+
+          after(:all) do
+            @subject.options.delete("showroom")
           end
 
           context 'and not passing SR param' do
@@ -227,6 +236,10 @@ describe CLI do
               @subject.options[:showroom] = '111'
             end
 
+            after(:each) do
+              @subject.options.delete("showroom")
+            end
+
             it 'should call execution command' do
               expect(TestRail::TestRailTools).to receive(:exec)
               @subject.shoot
@@ -237,25 +250,25 @@ describe CLI do
               expect(result).to eq("\"Gem will execute command: cucumber -p lazada.id.showroom SR='111' TESTRAIL=1 --color -f json -o cucumber.json -t @C11,@C22,@C33\"\n")
             end
 
-            after(:each) do
-              @subject.options.delete("showroom")
-            end
-
           end
-
-          after(:all) do
-            @subject.options.delete("showroom")
-          end
-
         end
 
-      after(:all) do
-        @subject.options.clear
-      end
+      context 'and passing new command' do
+        before do
+          @subject.options[:command] = 'Command'
+        end
 
+        after do
+          @subject.options.delete("Command")
+        end
+
+        it 'should execute changed command' do
+          result = capture(:stdout) { @subject.shoot }
+          expect(result).to eq("\"Gem will execute command: Command @C11,@C22,@C33\"\n")
+        end
+      end
     end
   end
-
 end
 
 
