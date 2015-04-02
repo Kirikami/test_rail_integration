@@ -44,23 +44,40 @@ class CLI < Thor
        --venture for describing venture,
        --env for describing environment for run,
        --showroom with showroom name where start tests,
-       --command with new command"
+       --command with new command,
+       --auto"
   option :test_run_id
   option :venture
   option :showroom
   option :command
   option :env
+  option :auto
   def shoot
     if options[:test_run_id]
       test_run_id = options[:test_run_id]
-      parameters = TestRail::TestRun.get_by_id(test_run_id).name.downcase.match(/(#{TestRunParameters::VENTURE_REGEX}) (#{TestRunParameters::ENVIRONMENT_REGEX})*/)
       venture, env = nil
-      if parameters
-        venture = parameters[1]
-        env = parameters[2]
+      if options[:auto]
+        parameters = TestRail::TestRun.get_by_id(test_run_id).name.downcase.match(/(#{TestRunParameters::VENTURE_REGEX}) (#{TestRunParameters::ENVIRONMENT_REGEX})*/)
+        if parameters
+          venture = parameters[1]
+          env = parameters[2]
+        end
+      else
+        venture = options[:venture]
+        env = options[:env]
+        if venture.nil? && env.nil?
+          puts "You must set correct env, venture params through --env, --venture in order to execute command"
+          return
+        end
+        if venture.nil?
+          puts "You must set correct venture param through --venture in order to execute command"
+          return
+        end
+        if env.nil?
+          puts "You must set correct env param through --env in order to execute command"
+          return
+        end
       end
-      venture = options[:venture] if options[:venture]
-      env = options[:env] if options[:env]
       if env == "showroom"
         if options[:showroom]
           env = env + " SR='#{options[:showroom]}'"
@@ -69,18 +86,6 @@ class CLI < Thor
         end
       end
       command = options[:command] if options[:command]
-      if venture.nil? && env.nil?
-        puts "You must set correct env, venture params through --env, --venture in order to execute command"
-        return
-      end
-      if venture.nil?
-        puts "You must set correct venture param through --venture in order to execute command"
-        return
-      end
-      if env.nil?
-        puts "You must set correct env param through --env in order to execute command"
-        return
-      end
       test_run_parameters = TestRunParameters.new(venture, env, command)
       Connection.test_run_id = test_run_id
       TestRailTools.write_test_run_id(test_run_id)
