@@ -75,7 +75,11 @@ class CLI < Thor
           return
         end
         if parameters
-          command.venture = parameters[1]
+          if options[:venture]
+            command.venture = options[:venture]
+          else
+            command.venture = parameters[1]
+          end
           command.env = parameters[2]
         end
       elsif options[:simple] && !options[:command]

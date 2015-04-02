@@ -291,7 +291,7 @@ describe CLI do
 
             it 'should execute correct command' do
               result = capture(:stdout) { @subject.shoot }
-              expect(result).to eq("\"Gem will execute command: cucumber -p lazada.id.staging TESTRAIL=1 --color -f json -o cucumber.json -t @C11,@C22,@C33\"\n")
+              expect(result).to eq("\"Gem will execute command: cucumber -p lazada.vn.staging TESTRAIL=1 --color -f json -o cucumber.json -t @C11,@C22,@C33\"\n")
             end
 
             it 'should call execution command' do
