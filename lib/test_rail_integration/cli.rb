@@ -75,6 +75,7 @@ class CLI < Thor
           return
         end
         if parameters
+          # TODO venture can be everything
           if options[:venture]
             command.venture = options[:venture]
           else
