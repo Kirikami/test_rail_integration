@@ -45,17 +45,21 @@ class CLI < Thor
        --env for describing environment for run,
        --showroom with showroom name where start tests,
        --command with new command,
-       --auto for getting env, venture params from test run name."
+       --auto for getting env, venture params from test run name,
+       --simple for run without venture and env params."
   option :test_run_id
   option :venture
   option :showroom
   option :command
   option :env
   option :auto
+  option :simple
   def shoot
     if options[:test_run_id]
       test_run_id = options[:test_run_id]
-      venture, env = nil
+      Connection.test_run_id = test_run_id
+      TestRailTools.write_test_run_id(test_run_id)
+      command = TestRail::Command.new(test_run_id)
       if options[:auto]
         parameters = TestRail::TestRun.get_by_id(test_run_id).name.downcase.match(/(#{TestRunParameters::VENTURE_REGEX}) (#{TestRunParameters::ENVIRONMENT_REGEX})*/)
         if parameters.nil?
@@ -71,37 +75,38 @@ class CLI < Thor
           return
         end
         if parameters
-          venture = parameters[1]
-          env = parameters[2]
+          command.venture = parameters[1]
+          command.env = parameters[2]
         end
-      else
-        venture = options[:venture]
-        env = options[:env]
-        if venture.nil? && env.nil?
+      elsif options[:simple] && !options[:command]
+        puts "You should add command param to execute simple execution"
+        return
+      elsif !options[:simple] && !options[:command]
+        if options[:venture].nil? && options[:env].nil?
           puts "You must set correct env, venture params through --env, --venture in order to execute command"
           return
         end
-        if venture.nil?
+        if options[:venture].nil?
           puts "You must set correct venture param through --venture in order to execute command"
           return
         end
-        if env.nil?
+        if options[:env].nil?
           puts "You must set correct env param through --env in order to execute command"
           return
         end
+        command.venture = options[:venture]
+        command.env = options[:env]
       end
-      if env == "showroom"
-        if options[:showroom]
-          env = env + " SR='#{options[:showroom]}'"
-        else
-          env = env
-        end
+      if options[:env] == "showroom" && options[:showroom]
+        command.env = command.env + " SR='#{options[:showroom]}'"
       end
-      command = options[:command] if options[:command]
-      test_run_parameters = TestRunParameters.new(venture, env, command)
-      Connection.test_run_id = test_run_id
-      TestRailTools.write_test_run_id(test_run_id)
-      TestRail::Command.new(test_run_id, test_run_parameters).execute
+      if options[:command]
+        command.command = options[:command]
+      else
+        command.command = TestRunParameters::EXEC_COMMAND
+      end
+      command.generate
+      command.execute
     else
       puts "You must set correct test run id through --test_run_id"
     end

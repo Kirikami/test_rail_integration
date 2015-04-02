@@ -155,6 +155,46 @@ describe CLI do
         @subject.options.clear
       end
 
+      context 'and receiving simple param' do
+
+        before(:each) do
+          @subject.options[:simple] = ''
+        end
+
+        context 'and passing required command param' do
+
+          before(:each) do
+            @subject.options[:command] = 'command'
+          end
+
+          it 'should call execution command' do
+            expect(TestRail::Command).to receive(:execute_command)
+            @subject.shoot
+          end
+
+          it 'should have output' do
+            result = capture(:stdout) { @subject.shoot }
+            expect(result).to eq("\"Gem will execute command: command @C11,@C22,@C33\"\n")
+          end
+
+        end
+
+        context 'and not passing required command param' do
+
+          it 'should not call execution command' do
+            expect(TestRail::Command).not_to receive(:execute_command)
+            @subject.shoot
+          end
+
+          it 'should have output' do
+            result = capture(:stdout) { @subject.shoot }
+            expect(result).to eq("You should add command param to execute simple execution\n")
+          end
+
+        end
+
+      end
+
       context 'and receiving --auto param' do
 
         before(:each) do
