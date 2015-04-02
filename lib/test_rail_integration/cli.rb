@@ -45,7 +45,7 @@ class CLI < Thor
        --env for describing environment for run,
        --showroom with showroom name where start tests,
        --command with new command,
-       --auto"
+       --auto for getting env, venture params from test run name."
   option :test_run_id
   option :venture
   option :showroom
@@ -58,6 +58,18 @@ class CLI < Thor
       venture, env = nil
       if options[:auto]
         parameters = TestRail::TestRun.get_by_id(test_run_id).name.downcase.match(/(#{TestRunParameters::VENTURE_REGEX}) (#{TestRunParameters::ENVIRONMENT_REGEX})*/)
+        if parameters.nil?
+          puts "Your test run name is not correct. It don't contain venture, env params. Please provide correct name for test run on test rail side."
+          return
+        end
+        if parameters[1].nil?
+          puts "Your test run name is not correct. It don't contain venture param. Please provide correct name for test run on test rail side."
+          return
+        end
+        if parameters[2].nil?
+          puts "Your test run name is not correct. It don't contain env param. Please provide correct name for test run on test rail side."
+          return
+        end
         if parameters
           venture = parameters[1]
           env = parameters[2]
