@@ -2,7 +2,6 @@ require 'rspec'
 require_relative '../lib/test_rail_integration/cli'
 require_relative '../lib/test_rail_integration/generator/connection'
 
-
 describe CLI do
 
   before(:all) do
@@ -128,20 +127,14 @@ describe CLI do
   context 'when executing shoot cli command' do
 
     before(:each) do
-      allow(TestRail::Connection).to receive(:test_run_name).and_return("AT id staging new")
       allow(TestRail::Connection).to receive(:cases_id).and_return(["11", "22", "33"])
-      allow(TestRail::TestRailTools).to receive(:exec).and_return("Ok")
+      allow(TestRail::Command).to receive(:execute_command).and_return("Ok")
     end
 
     context 'and not passing test run id param' do
 
-      before(:each) do
-        allow(TestRail::Connection).to receive(:test_run_name).and_return("AT id staging new")
-        allow(TestRail::Connection).to receive(:cases_id).and_return(["11", "22", "33"])
-      end
-
       it 'should not execute command once' do
-        expect(TestRail::TestRailTools).not_to receive(:exec)
+        expect(TestRail::Command).not_to receive(:execute_command)
         @subject.shoot
       end
 
@@ -158,124 +151,331 @@ describe CLI do
         @subject.options = {:test_run_id => 777}
       end
 
-      after(:all) do
+      after(:each) do
         @subject.options.clear
       end
 
-      it 'should call execution command' do
-        expect(TestRail::TestRailTools).to receive(:exec)
-        @subject.shoot
-      end
+      context 'and receiving simple param' do
 
-      it 'should execute correct command' do
-        result = capture(:stdout) { @subject.shoot }
-        expect(result).to eq("\"Gem will execute command: cucumber -p lazada.id.staging TESTRAIL=1 --color -f json -o cucumber.json -t @C11,@C22,@C33\"\n")
-      end
+        before(:each) do
+          @subject.options[:simple] = ''
+        end
 
-        context 'and passing venture param' do
+        context 'and passing required command param' do
 
           before(:each) do
-            @subject.options[:venture] = 'vn'
+            @subject.options[:command] = 'command'
+          end
+
+          it 'should call execution command' do
+            expect(TestRail::Command).to receive(:execute_command)
+            @subject.shoot
+          end
+
+          it 'should have output' do
+            result = capture(:stdout) { @subject.shoot }
+            expect(result).to eq("\"Gem will execute command: command @C11,@C22,@C33\"\n")
+          end
+
+        end
+
+        context 'and not passing required command param' do
+
+          it 'should not call execution command' do
+            expect(TestRail::Command).not_to receive(:execute_command)
+            @subject.shoot
+          end
+
+          it 'should have output' do
+            result = capture(:stdout) { @subject.shoot }
+            expect(result).to eq("You should add command param to execute simple execution\n")
+          end
+
+        end
+
+      end
+
+      context 'and receiving --auto param' do
+
+        before(:each) do
+          @subject.options[:auto] = ''
+        end
+
+        context 'and test run name is incorrect' do
+
+          context 'and it dont have venture inside' do
+
+            before(:each) do
+              allow(TestRail::Connection).to receive(:test_run_data).and_return(
+                                                 {"name" => "AT hh staging"})
+            end
+
+            it 'should not call execution command' do
+              expect(TestRail::Command).not_to receive(:execute_command)
+              @subject.shoot
+            end
+
+            it 'should have output' do
+              result = capture(:stdout) { @subject.shoot }
+              expect(result).to eq("Your test run name is not correct. It don't contain venture, env params. Please provide correct name for test run on test rail side.\n")
+            end
+
+          end
+
+          context 'and it dont have env inside' do
+
+            before(:each) do
+              allow(TestRail::Connection).to receive(:test_run_data).and_return(
+                                                 {"name" => "AT id error"})
+            end
+
+            it 'should not call execution command' do
+              expect(TestRail::Command).not_to receive(:execute_command)
+              @subject.shoot
+            end
+
+            it 'should have output' do
+              result = capture(:stdout) { @subject.shoot }
+              expect(result).to eq("Your test run name is not correct. It don't contain env param. Please provide correct name for test run on test rail side.\n")
+            end
+
+          end
+
+          context 'and it dont have any params inside' do
+
+            before(:each) do
+              allow(TestRail::Connection).to receive(:test_run_data).and_return(
+                                                 {"name" => "Simple test run name"})
+            end
+
+            it 'should not call execution command' do
+              expect(TestRail::Command).not_to receive(:execute_command)
+              @subject.shoot
+            end
+
+            it 'should have output' do
+              result = capture(:stdout) { @subject.shoot }
+              expect(result).to eq("Your test run name is not correct. It don't contain venture, env params. Please provide correct name for test run on test rail side.\n")
+            end
+
+          end
+
+        end
+
+        context 'and test run name is correct' do
+
+          before(:each) do
+            allow(TestRail::Connection).to receive(:test_run_data).and_return(
+                                               {"name" => "AT id staging new"})
+          end
+
+          it 'should call execution command' do
+            expect(TestRail::Command).to receive(:execute_command)
+            @subject.shoot
+          end
+
+          it 'should execute correct command' do
+            result = capture(:stdout) { @subject.shoot }
+            expect(result).to eq("\"Gem will execute command: cucumber -p lazada.id.staging TESTRAIL=1 --color -f json -o cucumber.json -t @C11,@C22,@C33\"\n")
+          end
+
+          context 'and passing venture param' do
+
+            before(:each) do
+              @subject.options[:venture] = 'vn'
+            end
+
+            after(:each) do
+              @subject.options.delete("venture")
+            end
+
+            it 'should execute correct command' do
+              result = capture(:stdout) { @subject.shoot }
+              expect(result).to eq("\"Gem will execute command: cucumber -p lazada.vn.staging TESTRAIL=1 --color -f json -o cucumber.json -t @C11,@C22,@C33\"\n")
+            end
+
+            it 'should call execution command' do
+              expect(TestRail::Command).to receive(:execute_command)
+              @subject.shoot
+            end
+
+          end
+
+          context 'and passing env param' do
+
+            before(:each) do
+              @subject.options[:env] = 'live_test'
+            end
+
+            after(:all) do
+              @subject.options.delete("env")
+            end
+
+            it 'should execute correct command' do
+              result = capture(:stdout) { @subject.shoot }
+              expect(result).to eq("\"Gem will execute command: cucumber -p lazada.id.staging TESTRAIL=1 --color -f json -o cucumber.json -t @C11,@C22,@C33\"\n")
+            end
+
+            it 'should call execution command' do
+              expect(TestRail::Command).to receive(:execute_command)
+              @subject.shoot
+            end
+
+          end
+
+          context 'and passing new command' do
+
+            before do
+              @subject.options[:command] = 'Command'
+            end
+
+            after do
+              @subject.options.delete("Command")
+            end
+
+            it 'should execute changed command' do
+              result = capture(:stdout) { @subject.shoot }
+              expect(result).to eq("\"Gem will execute command: Command @C11,@C22,@C33\"\n")
+            end
+          end
+        end
+      end
+
+      context 'and not receiving --auto param' do
+
+        before(:each) do
+          allow(TestRail::Connection).to receive(:test_run_data).and_return(
+                                             {"name" => "Simple test run name"})
+        end
+
+        context 'and not passing venture param' do
+
+          before(:each) do
+            @subject.options[:env] = 'live_test'
+          end
+
+          after(:each) do
+            @subject.options.delete("env")
+          end
+
+          it 'should not call execution command' do
+            expect(TestRail::Command).not_to receive(:execute_command)
+            @subject.shoot
+          end
+
+          it 'should see output ' do
+            result = capture(:stdout) { @subject.shoot }
+            expect(result).to eq("You must set correct venture param through --venture in order to execute command\n")
+          end
+
+        end
+
+        context 'and not passing env param' do
+
+          before(:each) do
+            @subject.options[:venture] = 'id'
           end
 
           after(:each) do
             @subject.options.delete("venture")
           end
 
-          it 'should execute correct command' do
-            result = capture(:stdout) { @subject.shoot }
-            expect(result).to eq("\"Gem will execute command: cucumber -p lazada.vn.staging TESTRAIL=1 --color -f json -o cucumber.json -t @C11,@C22,@C33\"\n")
-          end
-
-          it 'should call execution command' do
-            expect(TestRail::TestRailTools).to receive(:exec)
+          it 'should not call execution command' do
+            expect(TestRail::Command).not_to receive(:execute_command)
             @subject.shoot
           end
 
+          it 'should see output ' do
+            result = capture(:stdout) { @subject.shoot }
+            expect(result).to eq("You must set correct env param through --env in order to execute command\n")
+          end
 
         end
 
-        context 'and passing env param' do
+        context 'and not passing venture, env params' do
+
+          it 'should not call execution command' do
+            expect(TestRail::Command).not_to receive(:execute_command)
+            @subject.shoot
+          end
+
+          it 'should see output ' do
+            result = capture(:stdout) { @subject.shoot }
+            expect(result).to eq("You must set correct env, venture params through --env, --venture in order to execute command\n")
+          end
+
+        end
+
+        context 'and passing all required params' do
 
           before(:each) do
+            @subject.options[:venture] = 'id'
             @subject.options[:env] = 'live_test'
           end
 
-          after(:all) do
+          after(:each) do
+            @subject.options.delete("venture")
             @subject.options.delete("env")
+          end
+
+          it 'should call execution command' do
+            expect(TestRail::Command).to receive(:execute_command)
+            @subject.shoot
           end
 
           it 'should execute correct command' do
             result = capture(:stdout) { @subject.shoot }
             expect(result).to eq("\"Gem will execute command: cucumber -p lazada.id.live_test TESTRAIL=1 --color -f json -o cucumber.json -t @C11,@C22,@C33\"\n")
           end
+        end
+      end
+
+      context 'and passing showroom env param' do
+
+        before(:each) do
+          @subject.options[:env] = "showroom"
+          @subject.options[:venture] = "id"
+        end
+
+        after(:each) do
+          @subject.options.delete("showroom")
+          @subject.options.delete("venture")
+        end
+
+        context 'and not passing SR param' do
+
+          it 'should execute correct command' do
+            result = capture(:stdout) { @subject.shoot }
+            expect(result).to eq("\"Gem will execute command: cucumber -p lazada.id.showroom TESTRAIL=1 --color -f json -o cucumber.json -t @C11,@C22,@C33\"\n")
+          end
 
           it 'should call execution command' do
-            expect(TestRail::TestRailTools).to receive(:exec)
+            expect(TestRail::Command).to receive(:execute_command)
             @subject.shoot
           end
 
         end
 
-        context 'and passing showroom env param' do
+        context 'and passing SR param' do
 
           before(:each) do
-            @subject.options[:env] = "showroom"
+            @subject.options[:showroom] = '111'
           end
 
-          after(:all) do
+          after(:each) do
             @subject.options.delete("showroom")
           end
 
-          context 'and not passing SR param' do
-
-            it 'should execute correct command' do
-              result = capture(:stdout) { @subject.shoot }
-              expect(result).to eq("\"Gem will execute command: cucumber -p lazada.id.showroom TESTRAIL=1 --color -f json -o cucumber.json -t @C11,@C22,@C33\"\n")
-            end
-
-            it 'should call execution command' do
-              expect(TestRail::TestRailTools).to receive(:exec)
-              @subject.shoot
-            end
-
+          it 'should call execution command' do
+            expect(TestRail::Command).to receive(:execute_command)
+            @subject.shoot
           end
 
-          context 'and passing SR param' do
-
-            before(:each) do
-              @subject.options[:showroom] = '111'
-            end
-
-            after(:each) do
-              @subject.options.delete("showroom")
-            end
-
-            it 'should call execution command' do
-              expect(TestRail::TestRailTools).to receive(:exec)
-              @subject.shoot
-            end
-
-            it 'should execute correct command' do
-              result = capture(:stdout) { @subject.shoot }
-              expect(result).to eq("\"Gem will execute command: cucumber -p lazada.id.showroom SR='111' TESTRAIL=1 --color -f json -o cucumber.json -t @C11,@C22,@C33\"\n")
-            end
-
+          it 'should execute correct command' do
+            result = capture(:stdout) { @subject.shoot }
+            expect(result).to eq("\"Gem will execute command: cucumber -p lazada.id.showroom SR='111' TESTRAIL=1 --color -f json -o cucumber.json -t @C11,@C22,@C33\"\n")
           end
-        end
 
-      context 'and passing new command' do
-        before do
-          @subject.options[:command] = 'Command'
-        end
-
-        after do
-          @subject.options.delete("Command")
-        end
-
-        it 'should execute changed command' do
-          result = capture(:stdout) { @subject.shoot }
-          expect(result).to eq("\"Gem will execute command: Command @C11,@C22,@C33\"\n")
         end
       end
     end

@@ -2,6 +2,7 @@ require 'thor'
 require_relative 'generator/project'
 require_relative 'generator/project/check'
 require_relative 'generator/test_run'
+require_relative 'generator/command'
 
 class CLI < Thor
   include TestRail
@@ -43,30 +44,74 @@ class CLI < Thor
        --venture for describing venture,
        --env for describing environment for run,
        --showroom with showroom name where start tests,
-       --command with new command"
+       --command with new command,
+       --auto for getting env, venture params from test run name,
+       --simple for run without venture and env params."
   option :test_run_id
   option :venture
   option :showroom
   option :command
   option :env
+  option :auto
+  option :simple
   def shoot
     if options[:test_run_id]
-      run_id = options[:test_run_id]
-      name_of_environment = Connection.test_run_name(run_id).downcase.match(/(#{TestRunParameters::VENTURE_REGEX}) (#{TestRunParameters::ENVIRONMENT_REGEX})*/)
-      environment_for_run = name_of_environment[1], name_of_environment[2] if name_of_environment
-      environment_for_run[0] = options[:venture] if options[:venture]
-      environment_for_run[1] = options[:env] if options[:env]
-      if environment_for_run[1] == "showroom"
-        if options[:showroom]
-          environment_for_run[1] = environment_for_run[1] + " SR='#{options[:showroom]}'"
-        else
-          environment_for_run[1] = environment_for_run[1]
+      test_run_id = options[:test_run_id]
+      Connection.test_run_id = test_run_id
+      TestRailTools.write_test_run_id(test_run_id)
+      command = TestRail::Command.new(test_run_id)
+      if options[:auto]
+        parameters = TestRail::TestRun.get_by_id(test_run_id).name.downcase.match(/(#{TestRunParameters::VENTURE_REGEX}) (#{TestRunParameters::ENVIRONMENT_REGEX})*/)
+        if parameters.nil?
+          puts "Your test run name is not correct. It don't contain venture, env params. Please provide correct name for test run on test rail side."
+          return
         end
+        if parameters[1].nil?
+          puts "Your test run name is not correct. It don't contain venture param. Please provide correct name for test run on test rail side."
+          return
+        end
+        if parameters[2].nil?
+          puts "Your test run name is not correct. It don't contain env param. Please provide correct name for test run on test rail side."
+          return
+        end
+        if parameters
+          # TODO venture can be everything
+          if options[:venture]
+            command.venture = options[:venture]
+          else
+            command.venture = parameters[1]
+          end
+          command.env = parameters[2]
+        end
+      elsif options[:simple] && !options[:command]
+        puts "You should add command param to execute simple execution"
+        return
+      elsif !options[:simple] && !options[:command]
+        if options[:venture].nil? && options[:env].nil?
+          puts "You must set correct env, venture params through --env, --venture in order to execute command"
+          return
+        end
+        if options[:venture].nil?
+          puts "You must set correct venture param through --venture in order to execute command"
+          return
+        end
+        if options[:env].nil?
+          puts "You must set correct env param through --env in order to execute command"
+          return
+        end
+        command.venture = options[:venture]
+        command.env = options[:env]
       end
-      command = options[:command] if options[:command]
-      Connection.test_run_id = run_id
-      TestRailTools.write_test_run_id(run_id)
-      TestRailTools.execute_generated_command(run_id, environment_for_run, command)
+      if options[:env] == "showroom" && options[:showroom]
+        command.env = command.env + " SR='#{options[:showroom]}'"
+      end
+      if options[:command]
+        command.command = options[:command]
+      else
+        command.command = TestRunParameters::EXEC_COMMAND
+      end
+      command.generate
+      command.execute
     else
       puts "You must set correct test run id through --test_run_id"
     end
