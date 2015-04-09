@@ -155,6 +155,36 @@ describe CLI do
         @subject.options.clear
       end
 
+      context 'and receiving type parameter' do
+
+        before(:each) do
+          @subject.options[:type] = 3
+          @subject.options[:env] = 'staging'
+          @subject.options[:venture] = 'vn'
+        end
+
+        xit 'should execute command' do
+          @subject.shoot
+        end
+
+        xit 'should get tags with required type' do
+        end
+      end
+
+      context 'and not receiving type parameter' do
+
+        before(:each) do
+          @subject.options[:type] = '4'
+        end
+
+        xit 'should execute command' do
+          @subject.shoot
+        end
+
+        xit 'should get tags with default type' do
+        end
+      end
+
       context 'and receiving simple param' do
 
         before(:each) do

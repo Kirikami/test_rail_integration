@@ -54,6 +54,7 @@ class CLI < Thor
   option :env
   option :auto
   option :simple
+  option :type
   def shoot
     if options[:test_run_id]
       test_run_id = options[:test_run_id]
@@ -109,6 +110,9 @@ class CLI < Thor
         command.command = options[:command]
       else
         command.command = TestRunParameters::EXEC_COMMAND
+      end
+      if options[:type]
+        command.type = options[:type]
       end
       command.generate
       command.execute

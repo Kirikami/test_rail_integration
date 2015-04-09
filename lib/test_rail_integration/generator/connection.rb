@@ -54,9 +54,18 @@ module TestRail
     #
     # cases = client.send_get("get_tests/12")
     #
-    def self.cases_id(test_run_id)
-      cases = client.send_get("get_tests/#{test_run_id}")
-      cases.map { |test_case| test_case["case_id"] }
+    def self.cases_by_default(test_run_id)
+      client.send_get("get_tests/#{test_run_id}")
+    end
+
+    def self.cases_ids_by_default(test_run_id)
+      cases = cases_by_default(test_run_id)
+      cases.map { |test_case| test_case["case_id"]}
+    end
+
+    def self.cases_ids_by_type(test_run_id, type)
+      cases = cases_by_default(test_run_id)
+      cases.map { |test_case| test_case["case_id"] if test_case["type_id"].equal?(type)}.compact
     end
 
     #
