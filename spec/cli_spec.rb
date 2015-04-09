@@ -127,7 +127,7 @@ describe CLI do
   context 'when executing shoot cli command' do
 
     before(:each) do
-      allow(TestRail::Connection).to receive(:cases_id).and_return(["11", "22", "33"])
+      allow(TestRail::Connection).to receive(:cases_ids_by_default).and_return(["11", "22", "33"])
       allow(TestRail::Command).to receive(:execute_command).and_return("Ok")
     end
 
