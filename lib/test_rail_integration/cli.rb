@@ -46,7 +46,8 @@ class CLI < Thor
        --showroom with showroom name where start tests,
        --command with new command,
        --auto for getting env, venture params from test run name,
-       --simple for run without venture and env params."
+       --simple for run without venture and env params,
+       --type to define tests with type to execute."
   option :test_run_id
   option :venture
   option :showroom
@@ -54,6 +55,7 @@ class CLI < Thor
   option :env
   option :auto
   option :simple
+  option :type
   def shoot
     if options[:test_run_id]
       test_run_id = options[:test_run_id]
@@ -109,6 +111,9 @@ class CLI < Thor
         command.command = options[:command]
       else
         command.command = TestRunParameters::EXEC_COMMAND
+      end
+      if options[:type]
+        command.type = options[:type].to_i
       end
       command.generate
       command.execute
