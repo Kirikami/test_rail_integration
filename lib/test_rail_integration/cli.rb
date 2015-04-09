@@ -113,7 +113,7 @@ class CLI < Thor
         command.command = TestRunParameters::EXEC_COMMAND
       end
       if options[:type]
-        command.type = options[:type]
+        command.type = options[:type].to_i
       end
       command.generate
       command.execute
