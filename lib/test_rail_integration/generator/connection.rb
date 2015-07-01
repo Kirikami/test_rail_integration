@@ -92,7 +92,7 @@ module TestRail
 
     #
     # Setting test suite id
-    #
+    #ki
     def self.test_suite_id
       @test_suite_id ||= TEST_SUITE
     end
@@ -133,6 +133,22 @@ module TestRail
     def self.change_test_run_name(run_id = test_run_id)
       new_name = test_run_name.gsub(IN_PROGRESS, "")
       client.send_post("update_run/#{run_id}", {name: new_name})
+    end
+
+    #
+    # Update tes run with fields
+    #
+    def self.update_test_run(run_id, name_of_run = nil, description = nil, assignedto_id = nil )
+      client.send_post("update_run/#{run_id}", {name: name_of_run, description: description, assignedto_id: assignedto_id})
+    end
+
+    #
+    # Write TeamCity build id to TestRail
+    #
+    def self.write_build_url(test_run_id, build_id)
+      description = "Build url: #{build_id}"
+      update_test_run(test_run_id, name_of_run = nil, description, assignedto_id = nil)
+      p description
     end
 
   end
