@@ -64,7 +64,7 @@ describe CLI do
 
     end
 
-    context 'passing test run id and TeamCity url' do
+    context 'passing test run id and build url' do
       before :each do
         @subject.options = {:build_url => 'http://teamcity.ua/buildnum123', :test_run_id => 12345}
       end
@@ -78,7 +78,7 @@ describe CLI do
         @subject.check_test_run_and_update
       end
 
-      it 'should get output with TeamCity url' do
+      it 'should get output with build url' do
         allow(TestRail::Connection).to receive(:write_build_url).and_return("#{@subject.options[:build_url]}")
         result = @subject.check_test_run_and_update
         expect(result).to eq('http://teamcity.ua/buildnum123')
