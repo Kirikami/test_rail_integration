@@ -21,14 +21,14 @@ module TestRail
     def generate
       #TODO do smth with weird replacement
       if venture.nil? || env.nil?
-        self.command = self.command + " " + get_tags(self.type)
+        self.command = self.command + " " + get_tags
       else
-        self.command = self.command.gsub("\#{parameters.venture}", self.venture).gsub("\#{parameters.environment}", self.env) + " " + get_tags(self.type)
+        self.command = self.command.gsub("\#{parameters.venture}", self.venture).gsub("\#{parameters.environment}", self.env) + " " + get_tags
       end
     end
 
-    def get_tags(type = nil)
-      if type.nil?
+    def get_tags
+      if self.type.nil?
         cases = Connection.cases_ids_by_default(self.id)
       else
         cases = Connection.cases_ids_by_type(self.id, self.type)
