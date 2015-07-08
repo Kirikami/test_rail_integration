@@ -151,7 +151,6 @@ module TestRail
     def self.write_build_url(test_run_id, build_id)
       description = "Build url: #{build_id}"
       update_test_run(test_run_id, nil, description, nil)
-      p description
     end
 
   end

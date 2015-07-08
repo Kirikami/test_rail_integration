@@ -78,10 +78,9 @@ describe CLI do
         @subject.check_test_run_and_update
       end
 
-      it 'should get output with build url' do
-        allow(TestRail::Connection).to receive(:write_build_url).and_return("#{@subject.options[:build_url]}")
-        result = @subject.check_test_run_and_update
-        expect(result).to eq('http://teamcity.ua/buildnum123')
+      it 'should send data to Test Rail' do
+        expect(TestRail::Connection).to receive(:update_test_run).and_return("#{@subject.options[:test_run_id]}, nil, #{@subject.options[:build_url]}, nil")
+        @subject.check_test_run_and_update
       end
     end
 
