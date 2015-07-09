@@ -64,6 +64,26 @@ describe CLI do
 
     end
 
+    context 'passing test run id and build url' do
+      before :each do
+        @subject.options = {:build_url => 'http://teamcity.ua/buildnum123', :test_run_id => 12345}
+      end
+
+      after :all do
+        @subject.options.clear
+      end
+
+      it 'should send update command' do
+        expect(TestRail::Connection).to receive(:write_build_url)
+        @subject.check_test_run_and_update
+      end
+
+      it 'should send data to Test Rail' do
+        expect(TestRail::Connection).to receive(:update_test_run).and_return("#{@subject.options[:test_run_id]}, nil, #{@subject.options[:build_url]}, nil")
+        @subject.check_test_run_and_update
+      end
+    end
+
   end
 
   context 'when executing create_test_run command' do

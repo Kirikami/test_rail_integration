@@ -121,6 +121,9 @@ module TestRail
       case_ids
     end
 
+    #
+    # Get info about test cases from TestRail
+    #
     def self.get_case_info(case_id)
       client.send_get("get_case/#{case_id}")
     end
@@ -133,6 +136,21 @@ module TestRail
     def self.change_test_run_name(run_id = test_run_id)
       new_name = test_run_name.gsub(IN_PROGRESS, "")
       client.send_post("update_run/#{run_id}", {name: new_name})
+    end
+
+    #
+    # Update test run with fields
+    #
+    def self.update_test_run(run_id, name_of_run = nil, description = nil, assigned_to_id = nil )
+      client.send_post("update_run/#{run_id}", {name: name_of_run, description: description, assignedto_id: assigned_to_id})
+    end
+
+    #
+    # Write TeamCity build id to TestRail
+    #
+    def self.write_build_url(test_run_id, build_id)
+      description = "Build url: #{build_id}"
+      update_test_run(test_run_id, nil, description, nil)
     end
 
   end

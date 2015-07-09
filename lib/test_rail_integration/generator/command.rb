@@ -28,8 +28,7 @@ module TestRail
     end
 
     def get_tags
-      cases = nil
-      if type.nil?
+      if self.type.nil?
         cases = Connection.cases_ids_by_default(self.id)
       else
         cases = Connection.cases_ids_by_type(self.id, self.type)
