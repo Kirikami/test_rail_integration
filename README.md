@@ -1,6 +1,6 @@
 # TestRailIntegration
 
-This game made for interaction between TestRail and Ruby automation framework Cucumber+Watir
+This gem made for interaction between TestRail and Ruby automation framework Cucumber+Watir
 
 ## Installation
 
